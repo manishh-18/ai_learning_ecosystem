@@ -1,0 +1,9 @@
+<h2>Documents</h2>
+
+{% for doc in documents %}
+    <div>
+        <h3>{{ doc.title }}</h3>
+        <p>Uploaded by: {{ doc.uploaded_by }}</p>
+        <p>Extracted Text (Preview): {{ doc.extracted_text|truncatewords:20 }}</p>
+    </div>
+{% endfor %}
