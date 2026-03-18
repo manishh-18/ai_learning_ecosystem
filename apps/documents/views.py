@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import DocumentForm
 from .models import Document
 import PyPDF2
+from apps.ai_engine.services.ai_service import generate_summary
 
 
 @login_required
@@ -22,6 +23,8 @@ def upload_document(request):
                 text += page.extract_text() or ""
 
             doc.extracted_text = text
+            summary = generate_summary(text[:3000])  # limit text size
+            doc.ai_summary = summary
             doc.save()
 
             return redirect('document_list')

@@ -5,5 +5,6 @@
         <h3>{{ doc.title }}</h3>
         <p>Uploaded by: {{ doc.uploaded_by }}</p>
         <p>Extracted Text (Preview): {{ doc.extracted_text|truncatewords:20 }}</p>
+        <p><b>AI Summary:</b> {{ doc.ai_summary }}</p>
     </div>
 {% endfor %}
