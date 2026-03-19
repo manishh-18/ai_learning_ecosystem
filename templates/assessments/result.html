@@ -1,0 +1,21 @@
+<h2>Result</h2>
+
+<p>Score: {{ score }}/{{ total }}</p>
+
+{% if results %}
+    {% for r in results %}
+        <div>
+            <p><b>{{ r.question }}</b></p>
+            <p>Result: {{ r.result }}</p>
+
+            {% if r.result == 'Wrong' %}
+                <p>Your Answer: {{ r.selected }}</p>
+                <p>Correct Answer: {{ r.correct }}</p>
+                <p>{{ r.feedback }}</p>
+            {% endif %}
+        </div>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No results found</p>
+{% endif %}

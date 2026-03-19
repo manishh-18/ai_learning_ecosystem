@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import DocumentForm
 from .models import Document
-import PyPDF2
 from apps.ai_engine.services.ai_service import generate_summary
-
+import PyPDF2
+from django.contrib import messages
 
 @login_required
 def upload_document(request):
@@ -16,11 +16,19 @@ def upload_document(request):
 
             # Extract PDF text
             file = request.FILES['file']
-            reader = PyPDF2.PdfReader(file)
-            text = ""
+            if not file.name.endswith('.pdf'):
+                messages.error(request, "Only PDF files are allowed.")
+                return redirect('upload_document')
+            try:
+                reader = PyPDF2.PdfReader(file)
+                text = ""
 
-            for page in reader.pages:
-                text += page.extract_text() or ""
+                for page in reader.pages:
+                    text += page.extract_text() or ""
+
+            except Exception as e:
+                messages.error(request, "Invalid or unsupported PDF file.")
+                return redirect('upload_document')
 
             doc.extracted_text = text
             summary = generate_summary(text[:3000])  # limit text size

@@ -1,0 +1,21 @@
+<h2>Quiz</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    {% for q in quiz.questions %}
+        <div>
+            <p><b>{{ forloop.counter }}. {{ q.question }}</b></p>
+
+            {% for opt in q.options %}
+                <label>
+                    <input type="radio" name="q{{ forloop.parentloop.counter }}" value="{{ opt }}">
+                    {{ opt }}
+                </label><br>
+            {% endfor %}
+        </div>
+        <hr>
+    {% endfor %}
+
+    <button type="submit">Submit</button>
+</form>

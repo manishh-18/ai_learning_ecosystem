@@ -1,3 +1,8 @@
+{% if messages %}
+    {% for message in messages %}
+        <p style="color:red;">{{ message }}</p>
+    {% endfor %}
+{% endif %}
 <h2>Upload Document</h2>
 
 <form method="post" enctype="multipart/form-data">
