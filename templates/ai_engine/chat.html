@@ -1,0 +1,17 @@
+<h2>AI Tutor</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="question" placeholder="Ask your doubt..." required>
+    <button type="submit">Ask</button>
+</form>
+
+<hr>
+
+{% for chat in chats %}
+    <div>
+        <p><b>You:</b> {{ chat.question }}</p>
+        <p><b>AI:</b> {{ chat.answer }}</p>
+    </div>
+    <hr>
+{% endfor %}

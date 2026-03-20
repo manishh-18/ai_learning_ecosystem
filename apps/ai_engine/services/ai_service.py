@@ -98,3 +98,22 @@ def clean_ai_output(text):
             text = text.split("\n", 1)[-1]
 
     return text.strip()
+
+def ai_tutor_response(question):
+    prompt = f"""
+    You are an AI tutor helping a student.
+
+    Answer the question clearly and simply.
+
+    Rules:
+    - Keep answer short (4-5 lines)
+    - No introduction like "Sure" or "Here is"
+    - Be direct and educational
+    - Use simple language
+
+    Question:
+    {question}
+    """
+
+    response = model.generate_content(prompt)
+    return clean_ai_output(response.text)
