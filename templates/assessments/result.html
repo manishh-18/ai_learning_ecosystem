@@ -1,21 +1,24 @@
-<h2>Result</h2>
+{% extends 'base.html' %}
 
-<p>Score: {{ score }}/{{ total }}</p>
+{% block content %}
 
-{% if results %}
-    {% for r in results %}
-        <div>
-            <p><b>{{ r.question }}</b></p>
-            <p>Result: {{ r.result }}</p>
+<h2 class="text-success mb-4">Score: {{ score }}/{{ total }}</h2>
 
-            {% if r.result == 'Wrong' %}
-                <p>Your Answer: {{ r.selected }}</p>
-                <p>Correct Answer: {{ r.correct }}</p>
-                <p>{{ r.feedback }}</p>
-            {% endif %}
+{% for r in results %}
+<div class="card p-3 mb-3 shadow-sm">
+
+    <p><b>{{ r.question }}</b></p>
+    <p>{{ r.result }}</p>
+
+    {% if r.result == 'Wrong' %}
+        <p class="text-danger">Your Answer: {{ r.selected }}</p>
+        <p class="text-success">Correct: {{ r.correct }}</p>
+        <div class="bg-light p-2 rounded">
+            {{ r.feedback }}
         </div>
-        <hr>
-    {% endfor %}
-{% else %}
-    <p>No results found</p>
-{% endif %}
+    {% endif %}
+
+</div>
+{% endfor %}
+
+{% endblock %}

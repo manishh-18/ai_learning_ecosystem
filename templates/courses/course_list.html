@@ -1,9 +1,21 @@
-<h2>All Courses</h2>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Courses</h2>
+
+<div class="row">
 
 {% for course in courses %}
-    <div>
-        <h3>{{ course.title }}</h3>
-        <p>{{ course.description }}</p>
-        <p>Instructor: {{ course.instructor }}</p>
+    <div class="col-md-4">
+        <div class="card p-3 shadow-sm mb-3">
+            <h5>{{ course.title }}</h5>
+            <p>{{ course.description|truncatewords:15 }}</p>
+            <p><small>Instructor: {{ course.instructor }}</small></p>
+        </div>
     </div>
 {% endfor %}
+
+</div>
+
+{% endblock %}

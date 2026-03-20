@@ -1,1 +1,39 @@
-<h1>Student Dashboard</h1>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row">
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm text-center">
+            <h5>Courses</h5>
+            <p>View all courses</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm text-center">
+            <h5>Documents</h5>
+            <p>Upload PDFs</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm text-center">
+            <h5>AI Tutor</h5>
+            <p>Ask doubts</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm text-center">
+            <h5>Quizzes</h5>
+            <p>Test knowledge</p>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

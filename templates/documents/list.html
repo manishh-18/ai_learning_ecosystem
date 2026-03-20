@@ -1,11 +1,21 @@
-<h2>Documents</h2>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Documents</h2>
 
 {% for doc in documents %}
-    <div>
-        <h3>{{ doc.title }}</h3>
-        <p>Uploaded by: {{ doc.uploaded_by }}</p>
-        <p>Extracted Text (Preview): {{ doc.extracted_text|truncatewords:20 }}</p>
-        <p><b>AI Summary:</b> {{ doc.ai_summary }}</p>
-        <a href="/assessments/generate/{{ doc.id }}/">Generate Quiz</a>
+<div class="card p-3 mb-3 shadow-sm">
+    <h5>{{ doc.title }}</h5>
+
+    <p><b>AI Summary:</b></p>
+    <div class="bg-light p-2 rounded">
+        {{ doc.ai_summary }}
     </div>
+
+    <br>
+    <a class="btn btn-primary btn-sm" href="/assessments/generate/{{ doc.id }}/">Generate Quiz</a>
+</div>
 {% endfor %}
+
+{% endblock %}

@@ -1,17 +1,28 @@
-<h2>AI Tutor</h2>
+{% extends 'base.html' %}
 
-<form method="post">
+{% block content %}
+
+<h2 class="mb-4">AI Tutor</h2>
+
+<form method="post" class="mb-3">
     {% csrf_token %}
-    <input type="text" name="question" placeholder="Ask your doubt..." required>
-    <button type="submit">Ask</button>
+    <input class="form-control" name="question" placeholder="Ask your doubt..." required>
 </form>
 
-<hr>
-
 {% for chat in chats %}
-    <div>
-        <p><b>You:</b> {{ chat.question }}</p>
-        <p><b>AI:</b> {{ chat.answer }}</p>
+
+<div class="mb-3 text-end">
+    <div class="bg-primary text-white p-2 rounded">
+        {{ chat.question }}
     </div>
-    <hr>
+</div>
+
+<div class="mb-3 text-start">
+    <div class="bg-light p-2 rounded">
+        {{ chat.answer }}
+    </div>
+</div>
+
 {% endfor %}
+
+{% endblock %}
