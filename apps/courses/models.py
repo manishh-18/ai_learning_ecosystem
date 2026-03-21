@@ -11,3 +11,11 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Enrollment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    progress = models.IntegerField(default=0)  # 0 to 100
+
+    def __str__(self):
+        return f"{self.user} - {self.course}"

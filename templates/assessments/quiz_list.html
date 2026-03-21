@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Your Quizzes</h2>
+
+{% for item in quiz_data %}
+<div class="card p-3 mb-3 shadow-sm">
+
+    <h5>{{ item.quiz.document.title }}</h5>
+
+    <p class="text-muted">
+        Score:
+        {% if item.attempt %}
+            <span class="badge bg-success">
+                {{ item.attempt.score }}/{{ item.attempt.total }}
+            </span>
+        {% else %}
+            <span class="badge bg-secondary">Not Attempted</span>
+        {% endif %}
+    </p>
+
+    <a href="/assessments/view/{{ item.quiz.id }}/" class="btn btn-primary btn-sm">
+        Attempt / Re-attempt
+    </a>
+
+</div>
+{% endfor %}
+
+{% endblock %}

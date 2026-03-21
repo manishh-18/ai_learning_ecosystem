@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from apps.core.views import analytics_dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +28,7 @@ urlpatterns = [
     path('documents/', include('apps.documents.urls')),
     path('assessments/', include('apps.assessments.urls')),
     path('ai/', include('apps.ai_engine.urls')),
+    path('analytics/', analytics_dashboard, name='analytics'),
 ]
 
 

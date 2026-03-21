@@ -4,25 +4,35 @@ from apps.documents.models import Document
 from apps.ai_engine.services.ai_service import generate_questions
 from apps.ai_engine.services.ai_service import generate_feedback
 from .models import Quiz
+from .models import QuizAttempt
+from django.db.models import Max
 
 
 @login_required
-def generate_quiz(request, doc_id):
-    document = get_object_or_404(Document, id=doc_id)
+def quiz_list(request):
+    quizzes = Quiz.objects.all()
+    attempts = QuizAttempt.objects.filter(user=request.user)
 
-    questions = generate_questions(document.extracted_text[:3000])
+    quiz_data = []
 
-    quiz = Quiz.objects.create(
-        document=document,
-        created_by=request.user,
-        questions=questions
-    )
+    for quiz in quizzes:
+        latest_attempt = None
 
-    return redirect('view_quiz', quiz_id=quiz.id)
+        for attempt in attempts:
+            if attempt.quiz.id == quiz.id:
+                latest_attempt = attempt
+
+        quiz_data.append({
+            'quiz': quiz,
+            'attempt': latest_attempt
+        })
+
+    return render(request, 'assessments/quiz_list.html', {
+        'quiz_data': quiz_data
+    })
 
 
 @login_required
-
 def view_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
 
@@ -56,8 +66,20 @@ def view_quiz(request, quiz_id):
                     'correct': correct,
                     'feedback': feedback
                 })
+            QuizAttempt.objects.create(
+                user=request.user,
+                quiz=quiz,
+                score=score,
+                total=len(quiz.questions)
+            )
 
             print("RESULTS:", results)
+        QuizAttempt.objects.create(
+            user=request.user,
+            quiz=quiz,
+            score=score,
+            total=len(quiz.questions)
+        )
 
         return render(request, 'assessments/result.html', {
             'results': results,
@@ -66,3 +88,17 @@ def view_quiz(request, quiz_id):
         })
 
     return render(request, 'assessments/view_quiz.html', {'quiz': quiz})
+
+@login_required
+def generate_quiz(request, doc_id):
+    document = get_object_or_404(Document, id=doc_id)
+
+    questions = generate_questions(document.extracted_text[:3000])
+
+    quiz = Quiz.objects.create(
+        document=document,
+        created_by=request.user,
+        questions=questions
+    )
+
+    return redirect('view_quiz', quiz_id=quiz.id)

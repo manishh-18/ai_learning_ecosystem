@@ -13,7 +13,7 @@
 
         {% for opt in q.options %}
         <label>
-            <input type="radio" name="q{{ forloop.counter }}" value="{{ opt }}">
+            <input type="radio" name="q{{ forloop.parentloop.counter }}" value="{{ opt }}">
             {{ opt }}
         </label><br>
         {% endfor %}
