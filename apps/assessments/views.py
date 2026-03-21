@@ -32,6 +32,8 @@ def view_quiz(request, quiz_id):
 
         for i, q in enumerate(quiz.questions, start=1):
             selected = request.POST.get(f'q{i}')
+            if not selected:
+                selected = "Not Answered"
             correct = q['correct_answer']
 
             if selected == correct:

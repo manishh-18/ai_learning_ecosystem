@@ -2,35 +2,69 @@
 
 {% block content %}
 
-<h2 class="mb-4">Dashboard</h2>
+<!-- Welcome -->
+<div class="mb-4">
+    <h2>Welcome, {{ name }} 👋</h2>
+    <p class="text-muted">Here’s your learning overview</p>
+</div>
 
+<!-- Stats Cards -->
+<div class="row mb-4">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6 class="text-muted">Courses</h6>
+            <h3>{{ course_count }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6 class="text-muted">Documents</h6>
+            <h3>{{ doc_count }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6 class="text-muted">Quizzes</h6>
+            <h3>{{ quiz_count }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6 class="text-muted">AI Usage</h6>
+            <h3>Active</h3>
+        </div>
+    </div>
+
+</div>
+
+<!-- Quick Actions -->
 <div class="row">
 
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card p-3 shadow-sm text-center">
-            <h5>Courses</h5>
-            <p>View all courses</p>
+            <h5>📄 Upload Document</h5>
+            <p class="text-muted">Analyze PDFs with AI</p>
+            <a href="/documents/upload/" class="btn btn-primary">Upload</a>
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card p-3 shadow-sm text-center">
-            <h5>Documents</h5>
-            <p>Upload PDFs</p>
+            <h5>🧠 AI Tutor</h5>
+            <p class="text-muted">Ask doubts instantly</p>
+            <a href="/ai/chat/" class="btn btn-success">Start Chat</a>
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card p-3 shadow-sm text-center">
-            <h5>AI Tutor</h5>
-            <p>Ask doubts</p>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card p-3 shadow-sm text-center">
-            <h5>Quizzes</h5>
-            <p>Test knowledge</p>
+            <h5>📚 View Courses</h5>
+            <p class="text-muted">Explore available courses</p>
+            <a href="/courses/list/" class="btn btn-dark">View</a>
         </div>
     </div>
 
