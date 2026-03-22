@@ -2,27 +2,98 @@
 
 {% block content %}
 
-<h2 class="mb-4">AI Tutor</h2>
+<style>
+.chat-container {
+    max-width: 800px;
+    margin: auto;
+}
 
-<form method="post" class="mb-3">
-    {% csrf_token %}
-    <input class="form-control" name="question" placeholder="Ask your doubt..." required>
-</form>
+.chat-box {
+    height: 400px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+}
 
-{% for chat in chats %}
+.user-msg {
+    text-align: right;
+    margin-bottom: 10px;
+}
 
-<div class="mb-3 text-end">
-    <div class="bg-primary text-white p-2 rounded">
-        {{ chat.question }}
+.bot-msg {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.msg {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 12px;
+    max-width: 70%;
+}
+
+.user {
+    background: #6366F1;
+    color: white;
+}
+
+.bot {
+    background: #e5e7eb;
+}
+
+.input-box {
+    display: flex;
+    margin-top: 10px;
+}
+
+.input-box input {
+    flex: 1;
+    border-radius: 8px;
+}
+
+</style>
+
+<div class="chat-container">
+
+    <h3 class="mb-3">🤖 AI Tutor</h3>
+
+    <div class="chat-box" id="chatBox">
+        <!-- messages -->
     </div>
+
+    <form method="post" id="chatForm">
+        {% csrf_token %}
+
+        <div class="input-box">
+            <input type="text" name="message" class="form-control me-2" placeholder="Ask something..." required>
+            <button class="btn btn-primary nav-loader">Send</button>
+        </div>
+
+    </form>
+
 </div>
 
-<div class="mb-3 text-start">
-    <div class="bg-light p-2 rounded">
-        {{ chat.answer }}
-    </div>
-</div>
+<script>
+const form = document.getElementById("chatForm");
+const chatBox = document.getElementById("chatBox");
 
-{% endfor %}
+form.addEventListener("submit", function () {
+    const input = form.querySelector("input");
+    const msg = input.value;
+
+    // user message
+    chatBox.innerHTML += `
+        <div class="user-msg">
+            <div class="msg user">${msg}</div>
+        </div>
+    `;
+
+    input.value = "";
+
+    // scroll
+    chatBox.scrollTop = chatBox.scrollHeight;
+});
+</script>
 
 {% endblock %}

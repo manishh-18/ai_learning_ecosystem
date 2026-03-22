@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Chat
 from .services.ai_service import ai_tutor_response
-
+from django.views.decorators.csrf import csrf_exempt
 
 @login_required
+@csrf_exempt
 def chat_view(request):
     chats = Chat.objects.filter(user=request.user).order_by('created_at')
 

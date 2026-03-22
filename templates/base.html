@@ -49,6 +49,11 @@
         .card:hover {
             transform: translateY(-5px);
         }
+        .sidebar a.text-white {
+            font-weight: 600;
+            border-left: 3px solid #6366F1;
+            padding-left: 10px;
+        }
     </style>
 </head>
 
@@ -58,16 +63,16 @@
     <h4>AI LMS</h4>
     <hr>
 
-    <a href="/accounts/redirect/"><i class="fas fa-home"></i> Dashboard</a>
-    <a href="/courses/list/"><i class="fas fa-book"></i> Courses</a>
-    <a href="/analytics/">
+    <a href="/accounts/redirect/" class="{% if request.path == '/accounts/redirect/' %}text-white{% endif %}"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="/courses/list/" class="{% if '/courses' in request.path %}text-white{% endif %}"><i class="fas fa-book"></i> Courses</a>
+    <a href="/analytics/" class="{% if '/analytics' in request.path %}text-white{% endif %}">
         <i class="fas fa-chart-line"></i> Analytics
     </a>
-    <a href="/documents/list/"><i class="fas fa-file"></i> Documents</a>
-    <a href="/assessments/list/">
+    <a href="/documents/list/" class="{% if '/documents' in request.path %}text-white{% endif %}"><i class="fas fa-file"></i> Documents</a>
+    <a href="/assessments/list/" class="{% if '/assessments' in request.path %}text-white{% endif %}">
         <i class="fas fa-question-circle"></i> Quizzes
     </a>
-    <a href="/ai/chat/"><i class="fas fa-robot"></i> AI Tutor</a>
+    <a href="/ai/chat/" class="{% if '/ai' in request.path %}text-white{% endif %}"><i class="fas fa-robot"></i> AI Tutor</a>
     <a href="/accounts/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
 
@@ -75,5 +80,21 @@
     {% block content %}{% endblock %}
 </div>
 
+<script>
+// document.querySelectorAll("form").forEach(form => {
+//     form.addEventListener("submit", function () {
+//         const btn = form.querySelector("button[type='submit']");
+//         if (btn) {
+//             btn.disabled = true;
+//             btn.innerHTML = "Processing... <span class='spinner-border spinner-border-sm ms-2'></span>";
+//         }
+//     });
+// });
+// document.querySelectorAll(".nav-loader").forEach(btn => {
+//     btn.addEventListener("click", function () {
+//         this.innerHTML = "Loading... <span class='spinner-border spinner-border-sm ms-2'></span>";
+//     });
+// });
+</script>
 </body>
 </html>

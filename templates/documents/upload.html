@@ -1,12 +1,148 @@
-{% if messages %}
-    {% for message in messages %}
-        <p style="color:red;">{{ message }}</p>
-    {% endfor %}
-{% endif %}
-<h2>Upload Document</h2>
+{% extends 'base.html' %}
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Upload</button>
-</form>
+{% block content %}
+
+<style>
+.upload-container {
+    max-width: 600px;
+    margin: auto;
+}
+
+.upload-card {
+    padding: 30px;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.upload-area {
+    border: 2px dashed #6366F1;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.upload-area.dragover {
+    background: #eef2ff;
+}
+
+.upload-icon {
+    font-size: 40px;
+    color: #6366F1;
+}
+
+#fileName {
+    font-size: 14px;
+    margin-top: 10px;
+    color: #555;
+}
+
+.progress {
+    height: 8px;
+    margin-top: 15px;
+    display: none;
+}
+</style>
+
+<div class="upload-container mt-5">
+
+    <div class="upload-card">
+
+        <h3 class="text-center mb-3">📄 Upload Document</h3>
+        <p class="text-center text-muted">Upload your study material and generate AI quizzes</p>
+
+        <form id="uploadForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Title -->
+            <input type="text" name="title" class="form-control mb-3" placeholder="Enter Topic / Title" required>
+
+            <!-- Upload Area -->
+            <div class="upload-area" id="dropArea">
+                <div class="upload-icon">📁</div>
+                <p>Drag & Drop or Click to Upload</p>
+                <input type="file" name="file" id="fileInput" hidden required>
+                <div id="fileName"></div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress">
+                <div id="progressBar" class="progress-bar" style="width:0%"></div>
+            </div>
+
+            <!-- Button -->
+            <button class="btn btn-primary w-100 mt-3" type="submit">
+                Upload & Generate
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+const dropArea = document.getElementById("dropArea");
+const fileInput = document.getElementById("fileInput");
+const fileName = document.getElementById("fileName");
+const form = document.getElementById("uploadForm");
+const progressBar = document.getElementById("progressBar");
+const progressContainer = document.querySelector(".progress");
+
+// Click to upload
+dropArea.addEventListener("click", () => fileInput.click());
+
+// Show file name
+fileInput.addEventListener("change", () => {
+    fileName.innerText = fileInput.files[0].name;
+});
+
+// Drag & Drop
+dropArea.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropArea.classList.add("dragover");
+});
+
+dropArea.addEventListener("dragleave", () => {
+    dropArea.classList.remove("dragover");
+});
+
+dropArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropArea.classList.remove("dragover");
+
+    fileInput.files = e.dataTransfer.files;
+    fileName.innerText = e.dataTransfer.files[0].name;
+});
+
+// Upload with progress
+form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("POST", "", true);
+
+    // Progress
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            progressContainer.style.display = "block";
+            const percent = (e.loaded / e.total) * 100;
+            progressBar.style.width = percent + "%";
+        }
+    };
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            window.location.reload();
+        }
+    };
+
+    xhr.send(formData);
+});
+</script>
+
+{% endblock %}
