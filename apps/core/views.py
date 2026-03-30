@@ -9,29 +9,19 @@ import json
 from collections import defaultdict
 from apps.ai_engine.services.ai_service import ai_tutor_response
 
-
 def home(request):
     return render(request, 'home.html')
 
 @login_required
 def student_dashboard(request):
     user = request.user
-
     context = {
         'name': user.full_name,
         'course_count': Course.objects.count(),
         'doc_count': Document.objects.filter(uploaded_by=user).count(),
         'quiz_count': Quiz.objects.filter(created_by=user).count(),
     }
-
     return render(request, 'student_dashboard.html', context)
-
-def instructor_dashboard(request):
-    return render(request, 'instructor_dashboard.html')
-
-def admin_dashboard(request):
-    return render(request, 'admin_dashboard.html')
-
 
 @login_required
 def analytics_dashboard(request):
@@ -91,7 +81,7 @@ def analytics_dashboard(request):
     """
 
     try:
-        insight = ai_tutor_response(prompt).text.strip()
+        insight = ai_tutor_response(prompt)
     except:
         insight = "Focus on weak topics and practice regularly."
 
@@ -114,3 +104,10 @@ def analytics_dashboard(request):
     }
 
     return render(request, 'analytics/dashboard.html', context)
+
+
+def instructor_dashboard(request):
+    return render(request, 'instructor_dashboard.html')
+
+def admin_dashboard(request):
+    return render(request, 'admin_dashboard.html')

@@ -59,14 +59,26 @@
     <h3 class="mb-3">🤖 AI Tutor</h3>
 
     <div class="chat-box" id="chatBox">
-        <!-- messages -->
+
+    {% for chat in chats %}
+
+        <div class="user-msg">
+            <div class="msg user">{{ chat.question }}</div>
+        </div>
+
+        <div class="bot-msg">
+            <div class="msg bot">{{ chat.answer }}</div>
+        </div>
+
+    {% endfor %}
+
     </div>
 
     <form method="post" id="chatForm">
         {% csrf_token %}
 
         <div class="input-box">
-            <input type="text" name="message" class="form-control me-2" placeholder="Ask something..." required>
+            <input type="text" name="message" class="form-control me-2" placeholder="Ask something..." required autocomplete="off">
             <button class="btn btn-primary nav-loader">Send</button>
         </div>
 
@@ -75,25 +87,32 @@
 </div>
 
 <script>
-const form = document.getElementById("chatForm");
 const chatBox = document.getElementById("chatBox");
 
-form.addEventListener("submit", function () {
-    const input = form.querySelector("input");
-    const msg = input.value;
-
-    // user message
-    chatBox.innerHTML += `
-        <div class="user-msg">
-            <div class="msg user">${msg}</div>
-        </div>
-    `;
-
-    input.value = "";
-
-    // scroll
-    chatBox.scrollTop = chatBox.scrollHeight;
-});
+// auto scroll to bottom on load
+chatBox.scrollTop = chatBox.scrollHeight;
 </script>
+
+<!-- <script>
+const form = document.getElementById("chatForm");
+const chatBox = document.getElementById("chatBox"); -->
+
+<!-- // form.addEventListener("submit", function () {
+//     const input = form.querySelector("input");
+//     const msg = input.value;
+
+//     // user message
+//     chatBox.innerHTML += `
+//         <div class="user-msg">
+//             <div class="msg user">${msg}</div>
+//         </div>
+//     `;
+
+//     input.value = "";
+
+//     // scroll
+//     chatBox.scrollTop = chatBox.scrollHeight;
+// }); -->
+<!-- </script> -->
 
 {% endblock %}

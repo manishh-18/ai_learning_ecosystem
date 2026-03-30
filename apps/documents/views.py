@@ -35,6 +35,7 @@ def upload_document(request):
             doc.ai_summary = summary
             doc.save()
 
+            messages.success(request, "Document uploaded successfully!")
             return redirect('document_list')
     else:
         form = DocumentForm()

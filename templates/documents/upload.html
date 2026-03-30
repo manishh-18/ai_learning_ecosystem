@@ -47,6 +47,11 @@
 </style>
 
 <div class="upload-container mt-5">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 
     <div class="upload-card">
 
@@ -137,7 +142,7 @@ form.addEventListener("submit", function(e) {
 
     xhr.onload = function() {
         if (xhr.status === 200) {
-            window.location.reload();
+            window.location.href = "/documents/list/";
         }
     };
 
