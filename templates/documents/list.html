@@ -2,20 +2,98 @@
 
 {% block content %}
 
-<h2 class="mb-4">Documents</h2>
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-{% for doc in documents %}
-<div class="card p-3 mb-3 shadow-sm">
-    <h5>{{ doc.title }}</h5>
+.doc-card {
+    border-radius: 14px;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
 
-    <p><b>AI Summary:</b></p>
-    <div class="bg-light p-2 rounded">
-        {{ doc.ai_summary }}
+.doc-card:hover {
+    transform: translateY(-3px);
+}
+
+.summary-box {
+    background: #f3f4f6;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.summary-point {
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-custom {
+    flex: 1;
+    border-radius: 8px;
+}
+</style>
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    <div class="page-header mb-4">
+        <h2>📄 Documents</h2>
+        <a href="{% url 'upload_document' %}" class="btn btn-primary">
+            + Upload Document
+        </a>
     </div>
 
-    <br>
-    <a class="btn btn-primary btn-sm" href="/assessments/generate/{{ doc.id }}/">Generate Quiz</a>
+    {% if documents %}
+
+        {% for doc in documents %}
+        <div class="doc-card mb-4">
+
+            <!-- Title -->
+            <h5 class="mb-2">{{ doc.title }}</h5>
+
+            <!-- Summary -->
+            <p class="mb-1"><b>AI Summary:</b></p>
+
+            <div class="summary-box">
+                {% for line in doc.ai_summary.splitlines %}
+                    {% if line %}
+                        <div class="summary-point">{{ line }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Buttons -->
+            <div class="action-buttons">
+
+                <a href="{% url 'view_summary' doc.id %}" class="btn btn-outline-secondary btn-custom">
+                    View Summary
+                </a>
+
+                <a href="/assessments/generate/{{ doc.id }}/" class="btn btn-primary btn-custom">
+                    Generate Quiz
+                </a>
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+    {% else %}
+        <p>No documents uploaded yet.</p>
+    {% endif %}
+
 </div>
-{% endfor %}
 
 {% endblock %}

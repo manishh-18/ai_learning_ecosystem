@@ -205,7 +205,7 @@ def clean_ai_output(text):
 # ---------- SUMMARY ----------
 def generate_summary(text):
     prompt = f"""
-    Summarize the following content in 5-6 short bullet points or if content is large then make summary according to you but cover all the topic
+    Summarize the following content in short bullet points or if content is large then make summary according to you but cover all the topic
 
     Rules:
     - Do NOT add any introduction

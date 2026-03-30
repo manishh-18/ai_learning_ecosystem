@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<style>
+<!-- <style>
 .chat-container {
     max-width: 800px;
     margin: auto;
@@ -52,36 +52,93 @@
     border-radius: 8px;
 }
 
-</style>
+</style> -->
+<style>
+.chat-container {
+    max-width: 900px;
+    margin: auto;
+}
 
+.chat-box {
+    height: 450px;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 15px;
+}
+
+.chat-row {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.user-row {
+    justify-content: flex-end;
+}
+
+.bot-row {
+    justify-content: flex-start;
+}
+
+.msg {
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 65%;
+    font-size: 14px;
+}
+
+.user {
+    background: linear-gradient(135deg, #6366F1, #4F46E5);
+    color: white;
+}
+
+.bot {
+    background: #e5e7eb;
+}
+
+.chat-input-box {
+    display: flex;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.chat-input-box input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.chat-input-box button {
+    background: #6366F1;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+</style>
 <div class="chat-container">
 
     <h3 class="mb-3">🤖 AI Tutor</h3>
 
     <div class="chat-box" id="chatBox">
 
-    {% for chat in chats %}
-
-        <div class="user-msg">
+        {% for chat in chats %}
+        <div class="chat-row user-row">
             <div class="msg user">{{ chat.question }}</div>
         </div>
 
-        <div class="bot-msg">
+        <div class="chat-row bot-row">
             <div class="msg bot">{{ chat.answer }}</div>
         </div>
-
-    {% endfor %}
+        {% endfor %}
 
     </div>
 
-    <form method="post" id="chatForm">
+    <form method="post" class="chat-input-box">
         {% csrf_token %}
-
-        <div class="input-box">
-            <input type="text" name="message" class="form-control me-2" placeholder="Ask something..." required autocomplete="off">
-            <button class="btn btn-primary nav-loader">Send</button>
-        </div>
-
+        <input type="text" name="message" placeholder="Ask anything..." required>
+        <button type="submit">➤</button>
     </form>
 
 </div>

@@ -47,11 +47,6 @@
 </style>
 
 <div class="upload-container mt-5">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-danger">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
 
     <div class="upload-card">
 
@@ -123,31 +118,31 @@ dropArea.addEventListener("drop", (e) => {
 });
 
 // Upload with progress
-form.addEventListener("submit", function(e) {
-    e.preventDefault();
+// form.addEventListener("submit", function(e) {
+//     e.preventDefault();
 
-    const formData = new FormData(form);
-    const xhr = new XMLHttpRequest();
+//     const formData = new FormData(form);
+//     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", "", true);
+//     xhr.open("POST", "", true);
 
-    // Progress
-    xhr.upload.onprogress = function(e) {
-        if (e.lengthComputable) {
-            progressContainer.style.display = "block";
-            const percent = (e.loaded / e.total) * 100;
-            progressBar.style.width = percent + "%";
-        }
-    };
+//     // Progress
+//     xhr.upload.onprogress = function(e) {
+//         if (e.lengthComputable) {
+//             progressContainer.style.display = "block";
+//             const percent = (e.loaded / e.total) * 100;
+//             progressBar.style.width = percent + "%";
+//         }
+//     };
 
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            window.location.href = "/documents/list/";
-        }
-    };
+//     xhr.onload = function() {
+//         if (xhr.status === 200) {
+//             window.location.href = "/documents/list/";
+//         }
+//     };
 
-    xhr.send(formData);
-});
+//     xhr.send(formData);
+// });
 </script>
 
 {% endblock %}

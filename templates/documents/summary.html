@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h3>{{ doc.title }}</h3>
+
+    <div class="summary-card mt-3">
+        {% for line in doc.ai_summary.splitlines %}
+            {% if line %}
+                <p>• {{ line }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</div>
+
+<style>
+.summary-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+</style>
+
+{% endblock %}

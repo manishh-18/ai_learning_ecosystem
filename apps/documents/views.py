@@ -47,3 +47,7 @@ def upload_document(request):
 def document_list(request):
     documents = Document.objects.all()
     return render(request, 'documents/list.html', {'documents': documents})
+
+def view_summary(request, doc_id):
+    doc = Document.objects.get(id=doc_id)
+    return render(request, 'documents/summary.html', {'doc': doc})
