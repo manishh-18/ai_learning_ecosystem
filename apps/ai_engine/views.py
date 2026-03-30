@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from .models import Chat
 from .services.ai_service import ai_tutor_response
@@ -10,7 +10,11 @@ def chat_view(request):
     chats = Chat.objects.filter(user=request.user).order_by('created_at')
 
     if request.method == 'POST':
-        question = request.POST.get('question')
+        question = request.POST.get('message')
+
+        if not question:
+            return redirect('chat')
+
         answer = ai_tutor_response(question)
 
         Chat.objects.create(
@@ -18,5 +22,7 @@ def chat_view(request):
             question=question,
             answer=answer
         )
+
+        return redirect('chat')   # ✅ IMPORTANT
 
     return render(request, 'ai_engine/chat.html', {'chats': chats})
