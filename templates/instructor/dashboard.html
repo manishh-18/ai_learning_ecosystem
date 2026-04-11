@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+.stats-box {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.section-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.action-btn {
+    margin-top: 10px;
+}
+</style>
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">👨‍🏫 Instructor Dashboard</h2>
+
+    <!-- Stats -->
+    <div class="stats-box">
+
+        <div class="stat-card">
+            <h4>{{ total_docs }}</h4>
+            <p>Documents</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>{{ total_quizzes }}</h4>
+            <p>Quizzes</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>{{ total_attempts }}</h4>
+            <p>Attempts</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>{{ avg_score }}%</h4>
+            <p>Avg Score</p>
+        </div>
+
+    </div>
+
+    <!-- Documents -->
+    <div class="section-card">
+        <h5>📄 Your Documents</h5>
+
+        {% for doc in documents %}
+            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                <span>{{ doc.title }}</span>
+
+                <div>
+                    <a href="{% url 'view_summary' doc.id %}" class="btn btn-sm btn-outline-secondary">Summary</a>
+                    <a href="/assessments/generate/{{ doc.id }}/" class="btn btn-sm btn-primary">Quiz</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No documents uploaded.</p>
+        {% endfor %}
+
+        <a href="{% url 'upload_document' %}" class="btn btn-primary action-btn">+ Upload New</a>
+    </div>
+
+    <!-- Quizzes -->
+    <div class="section-card">
+        <h5>📝 Your Quizzes</h5>
+
+        {% for quiz in quizzes %}
+            <div class="border-bottom py-2">
+                Quiz for: {{ quiz.document.title }}
+            </div>
+        {% empty %}
+            <p>No quizzes created.</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

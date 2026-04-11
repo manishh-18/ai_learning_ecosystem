@@ -106,8 +106,34 @@ def analytics_dashboard(request):
     return render(request, 'analytics/dashboard.html', context)
 
 
+@login_required
 def instructor_dashboard(request):
-    return render(request, 'instructor_dashboard.html')
+    user = request.user
+
+    documents = Document.objects.filter(uploaded_by=user)
+    quizzes = Quiz.objects.filter(created_by=user)
+    attempts = QuizAttempt.objects.filter(quiz__created_by=user)
+
+    total_docs = documents.count()
+    total_quizzes = quizzes.count()
+    total_attempts = attempts.count()
+
+    avg_score = 0
+    if attempts.exists():
+        avg_score = round(
+            sum([(a.score / a.total) * 100 for a in attempts]) / attempts.count(), 2
+        )
+
+    context = {
+        'total_docs': total_docs,
+        'total_quizzes': total_quizzes,
+        'total_attempts': total_attempts,
+        'avg_score': avg_score,
+        'documents': documents,
+        'quizzes': quizzes,
+    }
+
+    return render(request, 'instructor/dashboard.html', context)
 
 def admin_dashboard(request):
     return render(request, 'admin_dashboard.html')
