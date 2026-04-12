@@ -8,6 +8,9 @@ from apps.courses.models import Enrollment
 import json
 from collections import defaultdict
 from apps.ai_engine.services.ai_service import ai_tutor_response
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 def home(request):
     return render(request, 'home.html')
@@ -110,13 +113,15 @@ def analytics_dashboard(request):
 def instructor_dashboard(request):
     user = request.user
 
-    documents = Document.objects.filter(uploaded_by=user)
+    courses = Course.objects.filter(instructor=user)
+
+    enrollments = Enrollment.objects.filter(course__in=courses)
+
     quizzes = Quiz.objects.filter(created_by=user)
+
     attempts = QuizAttempt.objects.filter(quiz__created_by=user)
 
-    total_docs = documents.count()
-    total_quizzes = quizzes.count()
-    total_attempts = attempts.count()
+    total_students = enrollments.values('user').distinct().count()
 
     avg_score = 0
     if attempts.exists():
@@ -125,15 +130,96 @@ def instructor_dashboard(request):
         )
 
     context = {
-        'total_docs': total_docs,
-        'total_quizzes': total_quizzes,
-        'total_attempts': total_attempts,
+        'courses': courses,
+        'total_courses': courses.count(),
+        'total_students': total_students,
+        'total_quizzes': quizzes.count(),
         'avg_score': avg_score,
-        'documents': documents,
-        'quizzes': quizzes,
     }
 
     return render(request, 'instructor/dashboard.html', context)
 
 def admin_dashboard(request):
     return render(request, 'admin_dashboard.html')
+
+
+@login_required
+def course_students(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    enrollments = Enrollment.objects.filter(course=course)
+
+    student_data = []
+
+    for enroll in enrollments:
+        student = enroll.user
+
+        attempts = QuizAttempt.objects.filter(
+            user=student,
+            quiz__created_by=course.instructor
+        )
+
+        avg_score = 0
+        if attempts.exists():
+            avg_score = round(
+                sum([(a.score / a.total) * 100 for a in attempts]) / attempts.count(), 2
+            )
+
+        student_data.append({
+            'id': student.id,
+            'name': student.full_name or student.username,
+            'progress': enroll.progress,
+            'avg_score': avg_score
+        })
+
+    # 🔥 TOP PERFORMER
+    top_student = None
+    if student_data:
+        top_student = max(student_data, key=lambda x: x['avg_score'])
+
+    # 🔥 WEAK STUDENTS
+    weak_students = [s for s in student_data if s['avg_score'] < 50]
+
+    return render(request, 'instructor/course_students.html', {
+        'course': course,
+        'students': student_data,
+        'top_student': top_student,
+        'weak_students': weak_students
+    })
+
+
+@login_required
+def student_report(request, course_id, student_id):
+    course = get_object_or_404(Course, id=course_id)
+    student = get_object_or_404(User, id=student_id)
+
+    enrollment = Enrollment.objects.filter(course=course, user=student).first()
+
+    attempts = QuizAttempt.objects.filter(
+        user=student,
+        quiz__created_by=course.instructor
+    )
+
+    scores = []
+    quiz_history = []
+
+    for a in attempts:
+        percent = round((a.score / a.total) * 100, 2) if a.total else 0
+        scores.append(percent)
+
+        quiz_history.append({
+            'quiz': a.quiz.document.title if a.quiz.document else "Quiz",
+            'score': percent
+        })
+
+    avg_score = round(sum(scores) / len(scores), 2) if scores else 0
+
+    context = {
+        'student': student,
+        'course': course,
+        'progress': enrollment.progress if enrollment else 0,
+        'avg_score': avg_score,
+        'scores': scores,
+        'quiz_history': quiz_history
+    }
+
+    return render(request, 'instructor/student_report.html', context)

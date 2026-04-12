@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+.report-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+</style>
+
+<div class="container mt-4">
+
+    <h3>📊 {{ student.full_name }} Report</h3>
+    <p class="text-muted">Course: {{ course.title }}</p>
+
+    <!-- Overview -->
+    <div class="report-card">
+        <h5>Overview</h5>
+        <p><b>Progress:</b> {{ progress }}%</p>
+        <p><b>Average Score:</b> {{ avg_score }}%</p>
+    </div>
+
+    <!-- Quiz History -->
+    <div class="report-card">
+        <h5>Quiz History</h5>
+
+        {% for q in quiz_history %}
+            <div class="d-flex justify-content-between border-bottom py-2">
+                <span>{{ q.quiz }}</span>
+                <span>{{ q.score }}%</span>
+            </div>
+        {% empty %}
+            <p>No quizzes attempted yet.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Performance Trend -->
+    <div class="report-card">
+        <h5>Performance Trend</h5>
+
+        {% for s in scores %}
+            <div class="mb-2">
+                <div style="background:#e5e7eb;height:8px;border-radius:10px;">
+                    <div style="width:{{ s }}%;background:#6366F1;height:100%;border-radius:10px;"></div>
+                </div>
+                <small>{{ s }}%</small>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+.student-card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+}
+
+.progress-bar-custom {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #6366F1;
+}
+
+.badge-good { color: green; font-weight: 600; }
+.badge-avg { color: orange; font-weight: 600; }
+.badge-poor { color: red; font-weight: 600; }
+
+.top-box {
+    background: #ecfeff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.weak-box {
+    background: #fef2f2;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+</style>
+
+<div class="container mt-4">
+
+    <h3>👨‍🎓 Students in {{ course.title }}</h3>
+
+    <!-- 🔍 SEARCH -->
+    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search student...">
+
+    <!-- 🏆 TOP PERFORMER -->
+    {% if top_student %}
+    <div class="top-box">
+        <b>🏆 Top Performer:</b> {{ top_student.name }} ({{ top_student.avg_score }}%)
+    </div>
+    {% endif %}
+
+    <!-- ⚠️ WEAK STUDENTS -->
+    {% if weak_students %}
+    <div class="weak-box">
+        <b>⚠️ Students needing improvement:</b>
+        <ul>
+            {% for s in weak_students %}
+                <li>{{ s.name }} ({{ s.avg_score }}%)</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- 👨‍🎓 STUDENTS LIST -->
+    <div id="studentList">
+
+    {% for s in students %}
+    <div class="student-card student-item">
+
+        <div class="d-flex justify-content-between">
+            <h6>{{ s.name }}</h6>
+
+            {% if s.avg_score >= 75 %}
+                <span class="badge-good">Good</span>
+            {% elif s.avg_score >= 50 %}
+                <span class="badge-avg">Average</span>
+            {% else %}
+                <span class="badge-poor">Needs Improvement</span>
+            {% endif %}
+        </div>
+
+        <p>Progress: {{ s.progress }}%</p>
+
+        <div class="progress-bar-custom mb-2">
+            <div class="progress-fill" style="width: {{ s.progress }}%"></div>
+        </div>
+
+        <p>Avg Score: {{ s.avg_score }}%</p>
+
+        <!-- 📊 DETAIL BUTTON -->
+        <a href="{% url 'student_report' course.id s.id %}" class="btn btn-sm btn-outline-primary">
+
+    </div>
+    {% endfor %}
+
+    </div>
+
+</div>
+
+<!-- 🔍 SEARCH SCRIPT -->
+<script>
+const searchInput = document.getElementById("searchInput");
+const students = document.querySelectorAll(".student-item");
+
+searchInput.addEventListener("keyup", function () {
+    const value = this.value.toLowerCase();
+
+    students.forEach(student => {
+        const text = student.innerText.toLowerCase();
+        student.style.display = text.includes(value) ? "" : "none";
+    });
+});
+</script>
+
+{% endblock %}
