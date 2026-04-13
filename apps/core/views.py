@@ -111,18 +111,13 @@ def analytics_dashboard(request):
 
 @login_required
 def instructor_dashboard(request):
-    if request.user.role == 'instructor':
-        return redirect('instructor_dashboard')
-    
     user = request.user
 
     courses = Course.objects.filter(instructor=user)
 
     enrollments = Enrollment.objects.filter(course__in=courses)
-
     quizzes = Quiz.objects.filter(created_by=user)
-
-    attempts = QuizAttempt.objects.filter(quiz__created_by=user)
+    attempts = QuizAttempt.objects.filter(quiz__course__in=courses)
 
     total_students = enrollments.values('user').distinct().count()
 
@@ -132,8 +127,29 @@ def instructor_dashboard(request):
             sum([(a.score / a.total) * 100 for a in attempts]) / attempts.count(), 2
         )
 
+    # ✅ Course-wise analytics
+    course_data = []
+    for course in courses:
+        course_enrollments = Enrollment.objects.filter(course=course)
+        course_students = course_enrollments.count()
+
+        course_attempts = QuizAttempt.objects.filter(quiz__course=course)
+
+        course_avg = 0
+        if course_attempts.exists():
+            course_avg = round(
+                sum([(a.score / a.total) * 100 for a in course_attempts]) / course_attempts.count(), 2
+            )
+
+        course_data.append({
+            'course': course,
+            'students': course_students,
+            'avg_score': course_avg
+        })
+
     context = {
         'courses': courses,
+        'course_data': course_data,
         'total_courses': courses.count(),
         'total_students': total_students,
         'total_quizzes': quizzes.count(),

@@ -73,3 +73,6 @@ def dashboard_redirect(request):
         return redirect('instructor_dashboard')
     else:
         return redirect('admin_dashboard')
+    
+def role_selection(request):
+    return render(request, 'home.html')

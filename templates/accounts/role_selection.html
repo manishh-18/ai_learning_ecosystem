@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5 text-center">
+
+    <h3>Select Your Role</h3>
+
+    <div class="mt-4">
+
+        <a href="/accounts/login/?role=student" class="btn btn-primary m-2">
+            Student Login
+        </a>
+
+        <a href="/accounts/login/?role=instructor" class="btn btn-dark m-2">
+            Instructor Login
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
