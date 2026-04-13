@@ -25,6 +25,14 @@
     margin-bottom: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
 }
+
+.empty-box {
+    background: #f9fafb;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px dashed #d1d5db;
+}
 </style>
 
 <div class="container mt-4">
@@ -33,6 +41,7 @@
 
     <!-- Stats -->
     <div class="stat-box">
+
         <div class="stat-card">
             <h4>{{ total_courses }}</h4>
             <p>Courses</p>
@@ -52,39 +61,58 @@
             <h4>{{ avg_score }}%</h4>
             <p>Avg Score</p>
         </div>
+
     </div>
 
-    <!-- Add Course -->
+    <!-- Create Button -->
     <a href="{% url 'create_course' %}" class="btn btn-primary mb-3">
         + Create Course
     </a>
 
-    <!-- Courses -->
+    <!-- Courses Section -->
     <h5>Your Courses</h5>
 
-    {% for course in courses %}
-    <div class="course-card">
+    {% if courses %}
 
-        <h6>{{ course.title }}</h6>
+        {% for course in courses %}
+        <div class="course-card">
 
-        <p>
-            Students: {{ course.enrollment_set.count }}
-        </p>
+            <h6>{{ course.title }}</h6>
 
-        <div class="d-flex gap-2">
-            <a href="{% url 'course_students' course.id %}" class="btn btn-sm btn-outline-dark">
-                View Students
+            <p class="text-muted">
+                Students: {{ course.enrollment_set.count }}
+            </p>
+
+            <div class="d-flex gap-2">
+                <a href="{% url 'course_students' course.id %}" class="btn btn-sm btn-outline-dark">
+                    View Students
+                </a>
+
+                <a href="/assessments/list/" class="btn btn-sm btn-primary">
+                    Manage Quizzes
+                </a>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    {% else %}
+
+        <!-- 🎯 EMPTY STATE -->
+        <div class="empty-box mt-3">
+
+            <h5>No Courses Yet</h5>
+            <p class="text-muted">
+                Start by creating your first course and assign quizzes to students
+            </p>
+
+            <a href="{% url 'create_course' %}" class="btn btn-primary mt-2">
+                Create Your First Course 🚀
             </a>
 
-            <a href="/assessments/generate/{{ course.id }}/" class="btn btn-sm btn-primary">
-                Create Quiz
-            </a>
         </div>
 
-    </div>
-    {% empty %}
-        <p>No courses created yet.</p>
-    {% endfor %}
+    {% endif %}
 
 </div>
 

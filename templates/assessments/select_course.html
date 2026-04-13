@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h3>Select Course for Quiz</h3>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <select name="course" class="form-control mb-3" required>
+            {% for course in courses %}
+                <option value="{{ course.id }}">{{ course.title }}</option>
+            {% endfor %}
+        </select>
+
+        <button class="btn btn-primary">Generate Quiz</button>
+
+    </form>
+
+</div>
+
+{% endblock %}

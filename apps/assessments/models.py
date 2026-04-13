@@ -4,9 +4,12 @@ from apps.documents.models import Document
 
 User = settings.AUTH_USER_MODEL
 
+from apps.courses.models import Course
+
 class Quiz(models.Model):
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    document = models.ForeignKey('documents.Document', on_delete=models.CASCADE)
+    created_by = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
     questions = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
 

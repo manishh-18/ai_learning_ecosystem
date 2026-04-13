@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from apps.courses.models import Course
 from apps.documents.models import Document
 from apps.assessments.models import Quiz
@@ -111,6 +111,9 @@ def analytics_dashboard(request):
 
 @login_required
 def instructor_dashboard(request):
+    if request.user.role == 'instructor':
+        return redirect('instructor_dashboard')
+    
     user = request.user
 
     courses = Course.objects.filter(instructor=user)

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from apps.documents.models import Document
 from apps.ai_engine.services.ai_service import generate_questions
 from apps.ai_engine.services.ai_service import generate_feedback
-from .models import Quiz
+from .models import Quiz, Course
 from .models import QuizAttempt
 from django.db.models import Max
 
@@ -93,12 +93,24 @@ def view_quiz(request, quiz_id):
 def generate_quiz(request, doc_id):
     document = get_object_or_404(Document, id=doc_id)
 
-    questions = generate_questions(document.extracted_text[:3000])
+    courses = Course.objects.filter(instructor=request.user)
 
-    quiz = Quiz.objects.create(
-        document=document,
-        created_by=request.user,
-        questions=questions
-    )
+    if request.method == 'POST':
+        course_id = request.POST.get('course')
+        course = Course.objects.get(id=course_id)
 
-    return redirect('view_quiz', quiz_id=quiz.id)
+        questions = generate_questions(document.extracted_text[:3000])
+
+        quiz = Quiz.objects.create(
+            document=document,
+            created_by=request.user,
+            course=course,
+            questions=questions
+        )
+
+        return redirect('view_quiz', quiz_id=quiz.id)
+
+    return render(request, 'assessments/select_course.html', {
+        'document': document,
+        'courses': courses
+    })

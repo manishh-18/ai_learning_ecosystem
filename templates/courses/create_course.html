@@ -1,7 +1,89 @@
-<h2>Create Course</h2>
+{% extends 'base.html' %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create</button>
-</form>
+{% block content %}
+
+<style>
+.course-container {
+    max-width: 750px;
+    margin: auto;
+}
+
+.course-card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.form-control {
+    border-radius: 10px;
+}
+
+.create-btn {
+    background: linear-gradient(135deg, #6366F1, #4F46E5);
+    border: none;
+    padding: 12px;
+    font-weight: 500;
+    border-radius: 10px;
+}
+
+.create-btn:hover {
+    opacity: 0.9;
+}
+</style>
+
+<div class="course-container mt-5">
+
+    <div class="course-card">
+
+        <h3 class="mb-2">📚 Create New Course</h3>
+        <p class="text-muted mb-4">
+            Build a course for students to enroll, learn and track their progress
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Title -->
+            <div class="input-group">
+                <label>Course Title</label>
+                <input type="text" name="title" class="form-control" placeholder="e.g. Data Structures" required>
+            </div>
+
+            <!-- Description -->
+            <div class="input-group">
+                <label>Description</label>
+                <textarea name="description" class="form-control" rows="4" placeholder="Explain what students will learn..." required></textarea>
+            </div>
+
+            <!-- Difficulty -->
+            <div class="input-group">
+                <label>Difficulty Level</label>
+                <select name="difficulty" class="form-control">
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+            </div>
+
+            <!-- Button -->
+            <button type="submit" class="btn create-btn w-100 mt-3">
+                Create Course
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

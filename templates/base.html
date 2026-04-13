@@ -17,6 +17,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #F9FAFB;
         }
+
         .sidebar {
             width: 240px;
             height: 100vh;
@@ -25,22 +26,36 @@
             color: white;
             padding: 20px;
         }
+
+        .sidebar h4 {
+            margin-bottom: 20px;
+        }
+
         .sidebar a {
             color: #9CA3AF;
             display: block;
             margin-bottom: 15px;
             text-decoration: none;
+            padding-left: 5px;
+            transition: 0.2s;
         }
+
         .sidebar a:hover {
             color: white;
         }
+
+        .sidebar .active {
+            color: white;
+            font-weight: 600;
+            border-left: 3px solid #6366F1;
+            padding-left: 10px;
+        }
+
         .content {
             margin-left: 260px;
             padding: 30px;
         }
-        .card {
-            border-radius: 12px;
-        }
+
         .card {
             border-radius: 12px;
             transition: 0.3s;
@@ -49,15 +64,12 @@
         .card:hover {
             transform: translateY(-5px);
         }
-        .sidebar a.text-white {
-            font-weight: 600;
-            border-left: 3px solid #6366F1;
-            padding-left: 10px;
-        }
+
+        /* MESSAGE UI */
         .alert-wrapper {
             position: fixed;
             top: 20px;
-            left: 58%;
+            left: 55%;
             transform: translateX(-50%);
             width: 50%;
             z-index: 9999;
@@ -65,7 +77,6 @@
 
         .custom-alert {
             border-radius: 10px;
-            font-weight: 500;
             text-align: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
@@ -78,56 +89,97 @@
     <h4>AI LMS</h4>
     <hr>
 
-    <a href="/accounts/redirect/" class="{% if request.path == '/accounts/redirect/' %}text-white{% endif %}"><i class="fas fa-home"></i> Dashboard</a>
-    <a href="/courses/list/" class="{% if '/courses' in request.path %}text-white{% endif %}"><i class="fas fa-book"></i> Courses</a>
-    <a href="/analytics/" class="{% if '/analytics' in request.path %}text-white{% endif %}">
-        <i class="fas fa-chart-line"></i> Analytics
+    <!-- 🎯 STUDENT SIDEBAR -->
+    {% if request.user.role == 'student' %}
+
+        <a href="/accounts/redirect/" class="{% if request.path == '/accounts/redirect/' %}active{% endif %}">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+
+        <a href="/courses/list/" class="{% if '/courses' in request.path %}active{% endif %}">
+            <i class="fas fa-book"></i> Courses
+        </a>
+
+        <a href="/analytics/" class="{% if '/analytics' in request.path %}active{% endif %}">
+            <i class="fas fa-chart-line"></i> Analytics
+        </a>
+
+        <a href="/documents/list/" class="{% if '/documents' in request.path %}active{% endif %}">
+            <i class="fas fa-file"></i> Documents
+        </a>
+
+        <a href="/assessments/list/" class="{% if '/assessments' in request.path %}active{% endif %}">
+            <i class="fas fa-question-circle"></i> Quizzes
+        </a>
+
+        <a href="/ai/chat/" class="{% if '/ai' in request.path %}active{% endif %}">
+            <i class="fas fa-robot"></i> AI Tutor
+        </a>
+
+    {% endif %}
+
+
+    <!-- 🎯 INSTRUCTOR SIDEBAR -->
+    {% if request.user.role == 'instructor' %}
+
+        <a href="/instructor/" class="{% if '/instructor' in request.path %}active{% endif %}">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+
+        <a href="/courses/create/" class="{% if '/create' in request.path %}active{% endif %}">
+            <i class="fas fa-plus"></i> Create Course
+        </a>
+
+        <a href="/courses/list/" class="{% if '/courses' in request.path %}active{% endif %}">
+            <i class="fas fa-book"></i> Manage Courses
+        </a>
+
+        <a href="/assessments/list/" class="{% if '/assessments' in request.path %}active{% endif %}">
+            <i class="fas fa-question-circle"></i> Quizzes
+        </a>
+
+        <a href="/analytics/" class="{% if '/analytics' in request.path %}active{% endif %}">
+            <i class="fas fa-chart-line"></i> Reports
+        </a>
+
+    {% endif %}
+
+    <!-- LOGOUT -->
+    <a href="/accounts/logout/">
+        <i class="fas fa-sign-out-alt"></i> Logout
     </a>
-    <a href="/documents/list/" class="{% if '/documents' in request.path %}text-white{% endif %}"><i class="fas fa-file"></i> Documents</a>
-    <a href="/assessments/list/" class="{% if '/assessments' in request.path %}text-white{% endif %}">
-        <i class="fas fa-question-circle"></i> Quizzes
-    </a>
-    <a href="/ai/chat/" class="{% if '/ai' in request.path %}text-white{% endif %}"><i class="fas fa-robot"></i> AI Tutor</a>
-    <a href="/accounts/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
+
+
+<!-- ✅ GLOBAL MESSAGES -->
 {% if messages %}
 <div class="alert-wrapper">
   {% for message in messages %}
-    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show custom-alert" role="alert">
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show custom-alert">
       {{ message }}
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
   {% endfor %}
 </div>
 {% endif %}
+
+
 <div class="content">
     {% block content %}{% endblock %}
 </div>
 
+
+<!-- AUTO DISMISS ALERT -->
 <script>
 setTimeout(() => {
     document.querySelectorAll('.alert').forEach(alert => {
         alert.classList.remove('show');
         setTimeout(() => alert.remove(), 300);
     });
-}, 10000);
+}, 8000);
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-// document.querySelectorAll("form").forEach(form => {
-//     form.addEventListener("submit", function () {
-//         const btn = form.querySelector("button[type='submit']");
-//         if (btn) {
-//             btn.disabled = true;
-//             btn.innerHTML = "Processing... <span class='spinner-border spinner-border-sm ms-2'></span>";
-//         }
-//     });
-// });
-// document.querySelectorAll(".nav-loader").forEach(btn => {
-//     btn.addEventListener("click", function () {
-//         this.innerHTML = "Loading... <span class='spinner-border spinner-border-sm ms-2'></span>";
-//     });
-// });
-</script>
+
 </body>
 </html>

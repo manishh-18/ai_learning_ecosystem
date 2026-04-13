@@ -63,35 +63,57 @@
             <!-- Title -->
             <h5 class="mb-2">{{ doc.title }}</h5>
 
-            <!-- Summary -->
-            <p class="mb-1"><b>AI Summary:</b></p>
+            <!-- 🎯 STUDENT VIEW -->
+            {% if request.user.role == 'student' %}
 
-            <div class="summary-box">
-                {% for line in doc.ai_summary.splitlines %}
-                    {% if line %}
-                        <div class="summary-point">{{ line }}</div>
-                    {% endif %}
-                {% endfor %}
-            </div>
+                <p class="mb-1"><b>AI Summary:</b></p>
 
-            <!-- Buttons -->
-            <div class="action-buttons">
+                <div class="summary-box">
+                    {% for line in doc.ai_summary.splitlines %}
+                        {% if line %}
+                            <div class="summary-point">• {{ line }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
 
-                <a href="{% url 'view_summary' doc.id %}" class="btn btn-outline-secondary btn-custom">
-                    View Summary
-                </a>
+                <!-- Buttons -->
+                <div class="action-buttons">
 
-                <a href="/assessments/generate/{{ doc.id }}/" class="btn btn-primary btn-custom">
-                    Generate Quiz
-                </a>
+                    <a href="{% url 'view_summary' doc.id %}" class="btn btn-outline-secondary btn-custom">
+                        View Summary
+                    </a>
 
-            </div>
+                    <a href="/assessments/generate/{{ doc.id }}/" class="btn btn-primary btn-custom">
+                        Generate Quiz
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- 🎯 INSTRUCTOR VIEW -->
+            {% if request.user.role == 'instructor' %}
+
+                <p class="text-muted fst-italic">
+                    📚 Course material uploaded for students
+                </p>
+
+                <div class="action-buttons">
+
+                    <a href="/assessments/generate/{{ doc.id }}/" class="btn btn-primary btn-custom">
+                        Generate Quiz
+                    </a>
+
+                </div>
+
+            {% endif %}
 
         </div>
         {% endfor %}
 
     {% else %}
-        <p>No documents uploaded yet.</p>
+        <p class="text-muted">No documents uploaded yet.</p>
     {% endif %}
 
 </div>

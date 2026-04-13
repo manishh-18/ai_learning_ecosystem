@@ -2,14 +2,49 @@
 
 {% block content %}
 
-<h2 class="mb-4">Your Quizzes</h2>
+<style>
+.quiz-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.quiz-card:hover {
+    transform: translateY(-3px);
+}
+
+.quiz-title {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.quiz-meta {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.quiz-actions {
+    margin-top: 12px;
+}
+</style>
+
+<h2 class="mb-4">📝 Quizzes</h2>
 
 {% for item in quiz_data %}
-<div class="card p-3 mb-3 shadow-sm">
+<div class="quiz-card">
 
-    <h5>{{ item.quiz.document.title }}</h5>
+    <!-- Title -->
+    <div class="quiz-title">
+        {{ item.quiz.document.title }}
+    </div>
 
-    <p class="text-muted">
+    <!-- STUDENT VIEW -->
+    {% if request.user.role == 'student' %}
+    <div class="quiz-meta">
+
         Score:
         {% if item.attempt %}
             <span class="badge bg-success">
@@ -18,13 +53,37 @@
         {% else %}
             <span class="badge bg-secondary">Not Attempted</span>
         {% endif %}
-    </p>
 
-    <a href="/assessments/view/{{ item.quiz.id }}/" class="btn btn-primary btn-sm">
-        Attempt / Re-attempt
-    </a>
+    </div>
+
+    <div class="quiz-actions">
+        <a href="/assessments/view/{{ item.quiz.id }}/" class="btn btn-primary btn-sm">
+            Attempt / Re-attempt
+        </a>
+    </div>
+    {% endif %}
+
+
+    <!-- INSTRUCTOR VIEW -->
+    {% if request.user.role == 'instructor' %}
+    <div class="quiz-meta text-muted">
+        Created Quiz for Students
+    </div>
+
+    <div class="quiz-actions d-flex gap-2">
+        <a href="/assessments/view/{{ item.quiz.id }}/" class="btn btn-outline-primary btn-sm">
+            View Quiz
+        </a>
+
+        <span class="badge bg-info text-dark">
+            Instructor Mode
+        </span>
+    </div>
+    {% endif %}
 
 </div>
+{% empty %}
+<p class="text-muted">No quizzes available.</p>
 {% endfor %}
 
 {% endblock %}
