@@ -25,22 +25,22 @@ z-index:9999;
 <!-- 🧠 OVERVIEW -->
 <h4>🧠 Learning Overview</h4>
 <div class="row mb-4">
-    <div class="col-md-3"><div class="card p-3 text-center"><h6>Total Quizzes</h6><h3>{{ total_quizzes }}</h3></div></div>
-    <div class="col-md-3"><div class="card p-3 text-center"><h6>Avg Score</h6><h3>{{ avg_score }}%</h3></div></div>
-    <div class="col-md-3"><div class="card p-3 text-center"><h6>Best Score</h6><h3>{{ best_score }}%</h3></div></div>
-    <div class="col-md-3"><div class="card p-3 text-center"><h6>Trend</h6><h3>{{ improvement }}</h3></div></div>
+    <div class="col-md-3"><div class="card glass p-3 text-center"><h6>Total Quizzes</h6><h3>{{ total_quizzes }}</h3></div></div>
+    <div class="col-md-3"><div class="card glass p-3 text-center"><h6>Avg Score</h6><h3>{{ avg_score }}%</h3></div></div>
+    <div class="col-md-3"><div class="card glass p-3 text-center"><h6>Best Score</h6><h3>{{ best_score }}%</h3></div></div>
+    <div class="col-md-3"><div class="card glass p-3 text-center"><h6>Trend</h6><h3>{{ improvement }}</h3></div></div>
 </div>
 
 <!-- 📚 COURSE -->
 <h4>📚 Course Progress</h4>
 <div class="row mb-4">
-    <div class="col-md-4"><div class="card p-3 text-center"><h6>Total</h6><h3>{{ total_courses }}</h3></div></div>
-    <div class="col-md-4"><div class="card p-3 text-center"><h6>Completed</h6><h3>{{ completed_courses }}</h3></div></div>
-    <div class="col-md-4"><div class="card p-3 text-center"><h6>Progress</h6><h3>{{ avg_progress }}%</h3></div></div>
+    <div class="col-md-4"><div class="card glass p-3 text-center"><h6>Total</h6><h3>{{ total_courses }}</h3></div></div>
+    <div class="col-md-4"><div class="card glass p-3 text-center"><h6>Completed</h6><h3>{{ completed_courses }}</h3></div></div>
+    <div class="col-md-4"><div class="card glass p-3 text-center"><h6>Progress</h6><h3>{{ avg_progress }}%</h3></div></div>
 </div>
 
 <!-- ⚠️ WEAK TOPICS -->
-<div class="card p-3 mb-3">
+<div class="card glass p-3 mb-3">
     <h5>⚠️ Focus Areas</h5>
     {% for t in weak_topics %}
         <span class="badge bg-danger me-2 mb-2">{{ t }}</span>
@@ -50,7 +50,7 @@ z-index:9999;
 </div>
 
 <!-- 💪 STRONG TOPICS -->
-<div class="card p-3 mb-3">
+<div class="card glass p-3 mb-3">
     <h5>💪 Strong Areas</h5>
     {% for t in strong_topics %}
         <span class="badge bg-success me-2">{{ t }}</span>
@@ -60,7 +60,7 @@ z-index:9999;
 </div>
 
 <!-- 📊 TOPIC PERFORMANCE -->
-<div class="card p-3 mb-4">
+<div class="card glass p-3 mb-4">
     <h5>📊 Topic Performance</h5>
 
     {% for topic, val in topic_avg.items %}
@@ -77,13 +77,13 @@ z-index:9999;
 </div>
 
 <!-- 📈 GRAPH -->
-<div class="card p-3 mb-4">
+<div class="card glass p-3 mb-4">
     <h5>📈 Performance Trend</h5>
     <canvas id="chart"></canvas>
 </div>
 
 <!-- 🤖 AI INSIGHT -->
-<div class="card p-3">
+<div class="card glass p-3">
     <h5>🤖 AI Insight</h5>
     <p>{{ insight }}</p>
 </div>

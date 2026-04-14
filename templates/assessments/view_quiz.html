@@ -8,7 +8,7 @@
     {% csrf_token %}
 
     {% for q in quiz.questions %}
-    <div class="card p-3 mb-3 shadow-sm">
+    <div class="card glass p-3 mb-3 shadow-sm">
         <p><b>{{ forloop.counter }}. {{ q.question }}</b></p>
 
         {% for opt in q.options %}

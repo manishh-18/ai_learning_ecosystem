@@ -18,14 +18,14 @@
     <p class="text-muted">Course: {{ course.title }}</p>
 
     <!-- Overview -->
-    <div class="report-card">
+    <div class="report-card glass ">
         <h5>Overview</h5>
         <p><b>Progress:</b> {{ progress }}%</p>
         <p><b>Average Score:</b> {{ avg_score }}%</p>
     </div>
 
     <!-- Quiz History -->
-    <div class="report-card">
+    <div class="report-card glass ">
         <h5>Quiz History</h5>
 
         {% for q in quiz_history %}
@@ -39,7 +39,7 @@
     </div>
 
     <!-- Performance Trend -->
-    <div class="report-card">
+    <div class="report-card glass ">
         <h5>Performance Trend</h5>
 
         {% for s in scores %}

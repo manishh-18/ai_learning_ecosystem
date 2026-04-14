@@ -8,7 +8,7 @@
 
 {% for course in courses %}
     <div class="col-md-4">
-        <div class="card p-3 shadow-sm mb-3">
+        <div class="card glass p-3 shadow-sm mb-3">
             <h5>{{ course.title }}</h5>
             <p>{{ course.description|truncatewords:15 }}</p>
             <p><small>Instructor: {{ course.instructor }}</small></p>
