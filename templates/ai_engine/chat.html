@@ -124,7 +124,29 @@
 .bot {
     background: #f3f4f6;
 }
+.msg.bot p {
+    margin: 5px 0;
+    line-height: 1.5;
+}
 </style>
+<div style="display:flex; gap:20px;">
+
+<!-- SIDEBAR -->
+<div style="width:250px;">
+
+    <a href="{% url 'chat' %}" class="btn btn-primary w-100 mb-3">
+        + New Chat
+    </a>
+
+    {% for s in sessions %}
+        <a href="{% url 'chat_session' s.id %}" 
+           class="d-block p-2 mb-2 rounded {% if s.id == current_session.id %}bg-dark text-white{% endif %}">
+            {{ s.title }}
+        </a>
+    {% endfor %}
+
+</div>
+<div style="flex:1;">
 <div class="chat-container">
 
     <h3 class="mb-3">🤖 AI Tutor</h3>
@@ -137,7 +159,13 @@
         </div>
 
         <div class="chat-row bot-row">
-            <div class="msg bot">{{ chat.answer }}</div>
+            <div class="msg bot">
+                {% for line in chat.answer.splitlines %}
+                    {% if line %}
+                        <p style="margin-bottom:8px;">{{ line }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
         {% endfor %}
 
@@ -150,7 +178,7 @@
     </form>
 
 </div>
-
+</div>
 <script>
 const chatBox = document.getElementById("chatBox");
 

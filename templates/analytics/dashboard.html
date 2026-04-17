@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
+
+<!-- LOADER -->
 <div id="pageLoader" style="
 position:fixed;
 top:0;
@@ -13,17 +15,15 @@ align-items:center;
 flex-direction:column;
 z-index:9999;
 ">
-
     <div class="spinner-border text-primary mb-3"></div>
     <h5>Preparing your analytics...</h5>
-
 </div>
-<div id="mainContent" style="display:none;">
+
+<div id="mainContent" style="visibility:hidden;">
 
 <h2 class="mb-4">Analytics Dashboard 📊</h2>
 
-<!-- 🧠 OVERVIEW -->
-<h4>🧠 Learning Overview</h4>
+<!-- OVERVIEW -->
 <div class="row mb-4">
     <div class="col-md-3"><div class="card glass p-3 text-center"><h6>Total Quizzes</h6><h3>{{ total_quizzes }}</h3></div></div>
     <div class="col-md-3"><div class="card glass p-3 text-center"><h6>Avg Score</h6><h3>{{ avg_score }}%</h3></div></div>
@@ -31,15 +31,14 @@ z-index:9999;
     <div class="col-md-3"><div class="card glass p-3 text-center"><h6>Trend</h6><h3>{{ improvement }}</h3></div></div>
 </div>
 
-<!-- 📚 COURSE -->
-<h4>📚 Course Progress</h4>
+<!-- COURSE -->
 <div class="row mb-4">
     <div class="col-md-4"><div class="card glass p-3 text-center"><h6>Total</h6><h3>{{ total_courses }}</h3></div></div>
     <div class="col-md-4"><div class="card glass p-3 text-center"><h6>Completed</h6><h3>{{ completed_courses }}</h3></div></div>
     <div class="col-md-4"><div class="card glass p-3 text-center"><h6>Progress</h6><h3>{{ avg_progress }}%</h3></div></div>
 </div>
 
-<!-- ⚠️ WEAK TOPICS -->
+<!-- WEAK -->
 <div class="card glass p-3 mb-3">
     <h5>⚠️ Focus Areas</h5>
     {% for t in weak_topics %}
@@ -49,20 +48,19 @@ z-index:9999;
     {% endfor %}
 </div>
 
-<!-- 💪 STRONG TOPICS -->
+<!-- STRONG -->
 <div class="card glass p-3 mb-3">
     <h5>💪 Strong Areas</h5>
-    {% for t in strong_topics %}
-        <span class="badge bg-success me-2">{{ t }}</span>
+    {% for topic in strong_topics %}
+        <span class="badge bg-success me-2 mb-2">{{ topic }}</span>
     {% empty %}
-        <p>Keep practicing!</p>
+        <p>No strong areas yet</p>
     {% endfor %}
 </div>
 
-<!-- 📊 TOPIC PERFORMANCE -->
+<!-- TOPIC PERFORMANCE -->
 <div class="card glass p-3 mb-4">
     <h5>📊 Topic Performance</h5>
-
     {% for topic, val in topic_avg.items %}
         <p>{{ topic }} <span class="float-end">{{ val }}%</span></p>
         <div class="progress mb-2">
@@ -76,42 +74,125 @@ z-index:9999;
     {% endfor %}
 </div>
 
-<!-- 📈 GRAPH -->
+<!-- GRAPH -->
 <div class="card glass p-3 mb-4">
     <h5>📈 Performance Trend</h5>
-    <canvas id="chart"></canvas>
+    <canvas id="myChart"></canvas>
 </div>
 
-<!-- 🤖 AI INSIGHT -->
-<div class="card glass p-3">
-    <h5>🤖 AI Insight</h5>
-    <p>{{ insight }}</p>
-</div>
+<!-- AI INSIGHT BUTTON -->
+<div class="card p-3 mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h5>🤖 AI Insight</h5>
+        <button id="aiBtn" class="btn btn-primary btn-sm">
+            Generate Insight
+        </button>
+    </div>
+
+    <p id="aiText" class="mt-3 text-muted">
+        Click button to generate AI insight
+    </p>
 </div>
 
+</div>
+
+<!-- CHART -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const data = {{ chart_data|safe }};
 
-new Chart(document.getElementById('chart'), {
+<script>
+Chart.defaults.animation = false;
+</script>
+
+<script>
+Chart.defaults.animation = false; // ✅ global kill
+
+const labels = {{ chart_labels|safe }};
+const data = {{ chart_values|safe }};
+const topics = {{ chart_topics|safe }};
+
+const ctx = document.getElementById('myChart').getContext('2d');
+
+// ✅ destroy old chart if exists
+if (window.myChartInstance) {
+    window.myChartInstance.destroy();
+}
+
+window.myChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: data.map((_, i) => `Attempt ${i+1}`),
+        labels: labels,
         datasets: [{
             label: 'Accuracy (%)',
             data: data,
-            borderWidth: 2,
-            tension: 0.3
+            borderColor: '#6366F1',
+            tension: 0,
+            fill: false,
+            pointRadius: 5
         }]
+    },
+    options: {
+        animation: false, // ✅ local kill
+
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    title: function(context) {
+                        return topics[context[0].dataIndex];
+                    },
+                    label: function(context) {
+                        return context.raw + "% accuracy";
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100
+            }
+        }
     }
 });
-
-document.addEventListener("DOMContentLoaded", function () {
-    setTimeout(() => {
-        document.getElementById("pageLoader").style.display = "none";
-        document.getElementById("mainContent").style.display = "block";
-    }, 1000); // smooth delay
-});
-
 </script>
+
+<!-- AI BUTTON -->
+<script>
+document.getElementById("aiBtn").addEventListener("click", function () {
+
+    const btn = this;
+    const text = document.getElementById("aiText");
+
+    btn.disabled = true;
+    btn.innerHTML = "Generating... ⏳";
+    text.innerHTML = "Analyzing your performance...";
+
+    fetch("/analytics/ai-insight/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        text.innerHTML = data.insight;
+        btn.innerHTML = "Regenerate";
+        btn.disabled = false;
+    })
+    .catch(() => {
+        text.innerHTML = "Something went wrong.";
+        btn.innerHTML = "Try Again";
+        btn.disabled = false;
+    });
+
+});
+</script>
+
+<!-- LOADER FIX -->
+<script>
+window.addEventListener("load", function () {
+    document.getElementById("pageLoader").style.display = "none";
+    document.getElementById("mainContent").style.visibility = "visible";
+});
+</script>
+
 {% endblock %}

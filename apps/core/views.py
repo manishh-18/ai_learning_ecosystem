@@ -42,10 +42,12 @@ def analytics_dashboard(request):
         topic = a.quiz.document.title
         topic_scores[topic].append(percent)
 
-    # 🔹 Topic analysis
+    # 🔹 Topic analysis (UPDATED)
     topic_avg = {t: round(sum(v)/len(v), 2) for t, v in topic_scores.items()}
-    weak_topics = [t for t, v in topic_avg.items() if v < 50]
-    strong_topics = [t for t, v in topic_avg.items() if v > 75]
+
+    # ✅ FIXED: meaningful strong & weak topics
+    strong_topics = sorted(topic_avg, key=topic_avg.get, reverse=True)[:3]
+    weak_topics = sorted(topic_avg, key=topic_avg.get)[:3]
 
     # 🔹 Quiz stats
     total_quizzes = attempts.count()
@@ -72,21 +74,21 @@ def analytics_dashboard(request):
     ) if total_courses else 0
 
     # 🔹 AI Insight
-    prompt = f"""
-    Student performance:
+    # 🔹 AI Insight (STATIC — button will handle real AI)
+    insight = "Click 'Generate Insight' to analyze your performance."
 
-    Avg Score: {avg_score}
-    Weak Topics: {weak_topics}
-    Strong Topics: {strong_topics}
-    Recent Trend: {improvement}
+    # ✅ FIXED: topic-based chart instead of attempts
+    chart_labels = []
+    chart_values = []
+    chart_topics = []
 
-    Give short improvement advice in 2 lines.
-    """
+    for i, a in enumerate(attempts, start=1):
+        percent = (a.score / a.total) * 100 if a.total else 0
+        topic = a.quiz.document.title
 
-    try:
-        insight = ai_tutor_response(prompt)
-    except:
-        insight = "Focus on weak topics and practice regularly."
+        chart_labels.append(f"Attempt {i}")
+        chart_values.append(percent)
+        chart_topics.append(topic)
 
     context = {
         'total_quizzes': total_quizzes,
@@ -102,7 +104,11 @@ def analytics_dashboard(request):
         'weak_topics': weak_topics,
         'strong_topics': strong_topics,
 
-        'chart_data': json.dumps(percentages),
+        # UPDATED CHART DATA
+        'chart_labels': json.dumps(chart_labels),
+        'chart_values': json.dumps(chart_values),
+        'chart_topics': json.dumps(chart_topics),
+
         'insight': insight
     }
 
@@ -242,3 +248,54 @@ def student_report(request, course_id, student_id):
     }
 
     return render(request, 'instructor/student_report.html', context)
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@login_required
+@csrf_exempt
+def generate_ai_insight(request):
+    if request.method == "POST":
+        try:
+            user = request.user
+
+            attempts = QuizAttempt.objects.filter(user=user).select_related('quiz__document')
+
+            topic_scores = defaultdict(list)
+
+            for a in attempts:
+                percent = (a.score / a.total) * 100 if a.total else 0
+                topic = a.quiz.document.title
+                topic_scores[topic].append(percent)
+
+            topic_avg = {t: round(sum(v)/len(v), 2) for t, v in topic_scores.items()}
+
+            strong_topics = sorted(topic_avg, key=topic_avg.get, reverse=True)[:3]
+            weak_topics = sorted(topic_avg, key=topic_avg.get)[:3]
+
+            scores = []
+
+            for a in attempts:
+                if a.total:  # avoid division by zero
+                    percent = (a.score / a.total) * 100 if a.total else 0
+                    scores.append(percent)
+
+            avg_score = round(sum(scores) / len(scores), 2) if scores else 0
+
+            prompt = f"""
+            Student performance:
+
+            Avg Score: {avg_score}
+            Weak Topics: {weak_topics}
+            Strong Topics: {strong_topics}
+
+            Give short improvement advice in 3-4 lines.
+            """
+
+            insight = ai_tutor_response(prompt)
+
+            return JsonResponse({'insight': insight})
+
+        except Exception as e:
+            print("AI ERROR:", e) 
+            return JsonResponse({'insight': 'Unable to generate insight right now.'})

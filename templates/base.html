@@ -16,6 +16,9 @@
         * {
     transition: all 0.2s ease-in-out;
 }
+html {
+    scroll-behavior: smooth;
+}
 body {
     font-family: 'Inter', sans-serif;
     background: linear-gradient(135deg, #f9fafb, #eef2ff);
@@ -60,6 +63,14 @@ body {
     font-weight: 500;
 }
 
+/* #myChart {
+    width: 100% !important;
+    height: 300px !important;
+} */
+
+canvas {
+    transition: none !important;
+}
 /* CONTENT */
 .content {
     margin-left: 270px;
@@ -77,9 +88,10 @@ body {
 
 .card:hover,
 .doc-card:hover,
-.quiz-card:hover,
-.course-card:hover {
-    transform: translateY(-5px) scale(1.01);
+.course-card:hover,
+.quiz-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
 }
 
 /* BUTTONS */
@@ -91,6 +103,7 @@ body {
 .btn-primary {
     background: linear-gradient(135deg, #6366F1, #4F46E5);
     border: none;
+    box-shadow: 0 4px 10px rgba(99,102,241,0.3);
 }
 
 .btn-primary:hover {
@@ -124,6 +137,35 @@ input, textarea, select {
     padding: 10px !important;
 }
 
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 250px;
+    right: 0;
+    height: 70px;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(12px);
+    padding: 15px 30px;
+    border-bottom: 1px solid #eee;
+    z-index: 1000;
+}
+
+.content {
+    margin-left: 270px;
+    padding: 100px 35px 35px 35px;
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    background: #6366F1;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
 
 /* SCROLLBAR */
 ::-webkit-scrollbar {
@@ -137,6 +179,28 @@ input, textarea, select {
 </head>
 
 <body>
+
+    <div class="topbar">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <h5 class="mb-0">🚀 AI Learning</h5>
+
+        <div class="d-flex align-items-center gap-3">
+
+            <span class="text-muted small">
+                {{ request.user.full_name|default:request.user.username }}
+            </span>
+
+            <div class="avatar">
+                {{ request.user.username|first|upper }}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 <div class="sidebar">
     <h4>AI LMS</h4>
