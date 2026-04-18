@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>{{ course.title }}</h2>
+    <p class="text-muted">Manage your course content</p>
+
+    <!-- ADD BUTTONS -->
+    <div class="mb-3">
+        <a href="{% url 'add_material' course.id %}" class="btn btn-primary">+ Add Material</a>
+        <a href="{% url 'add_video' course.id %}" class="btn btn-success">+ Add Video</a>
+        <a href="/assessments/generate-page/{{ course.id }}/" class="btn btn-warning">+ Add Quiz</a>
+    </div>
+
+    <hr>
+
+    <!-- MATERIAL -->
+    <h5>📄 Materials</h5>
+    {% for m in materials %}
+        <div class="card p-2 mb-2">{{ m.title }}</div>
+    {% empty %}
+        <p>No materials</p>
+    {% endfor %}
+
+    <!-- VIDEOS -->
+    <h5 class="mt-4">🎥 Videos</h5>
+    {% for v in videos %}
+        <div class="card p-2 mb-2">
+            <a href="{{ v.video_url }}" target="_blank">{{ v.title }}</a>
+        </div>
+    {% empty %}
+        <p>No videos</p>
+    {% endfor %}
+
+    <!-- QUIZ -->
+    <h5 class="mt-4">🧠 Quizzes</h5>
+    {% for q in quizzes %}
+        <div class="card p-2 mb-2">
+            Quiz {{ forloop.counter }}
+        </div>
+    {% empty %}
+        <p>No quizzes</p>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

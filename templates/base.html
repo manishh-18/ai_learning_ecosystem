@@ -293,27 +293,32 @@ input, textarea, select {
     <!-- 🎯 INSTRUCTOR SIDEBAR -->
     {% if request.user.role == 'instructor' %}
 
-        <a href="/instructor/" class="{% if '/instructor' in request.path %}active{% endif %}">
-            <i class="fas fa-home"></i> Dashboard
-        </a>
+<a href="{% url 'instructor_dashboard' %}" 
+   class="{% if request.resolver_match.url_name == 'instructor_dashboard' %}active{% endif %}">
+    <i class="fas fa-home"></i> Dashboard
+</a>
 
-        <a href="/courses/create/" class="{% if '/create' in request.path %}active{% endif %}">
-            <i class="fas fa-plus"></i> Create Course
-        </a>
+<a href="{% url 'create_course' %}" 
+   class="{% if request.resolver_match.url_name == 'create_course' %}active{% endif %}">
+    <i class="fas fa-plus"></i> Create Course
+</a>
 
-        <a href="/courses/list/" class="{% if '/courses' in request.path %}active{% endif %}">
-            <i class="fas fa-book"></i> Manage Courses
-        </a>
+<a href="{% url 'course_list' %}" 
+   class="{% if request.resolver_match.url_name == 'course_list' %}active{% endif %}">
+    <i class="fas fa-book"></i> Manage Courses
+</a>
 
-        <a href="/assessments/list/" class="{% if '/assessments' in request.path %}active{% endif %}">
-            <i class="fas fa-question-circle"></i> Quizzes
-        </a>
+<a href="{% url 'quiz_list' %}" 
+   class="{% if 'assessments' in request.path %}active{% endif %}">
+    <i class="fas fa-question-circle"></i> Quizzes
+</a>
 
-        <a href="/analytics/" class="{% if '/analytics' in request.path %}active{% endif %}">
-            <i class="fas fa-chart-line"></i> Reports
-        </a>
+<a href="{% url 'analytics' %}" 
+   class="{% if request.resolver_match.url_name == 'analytics' %}active{% endif %}">
+    <i class="fas fa-chart-line"></i> Reports
+</a>
 
-    {% endif %}
+{% endif %}
 
     <!-- LOGOUT -->
     <a href="/accounts/logout/">

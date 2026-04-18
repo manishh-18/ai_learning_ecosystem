@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Courses</h2>
+
+<div class="row">
+
+{% for course in courses %}
+
+<div class="card p-3 mb-3">
+
+    <h5>{{ course.title }}</h5>
+    <p class="text-muted">{{ course.description }}</p>
+
+    {% if course.id in enrolled_courses %}
+        <a href="{% url 'course_detail' course.id %}" class="btn btn-success">
+            Go to Course
+        </a>
+    {% else %}
+        <a href="{% url 'enroll_course' course.id %}" class="btn btn-primary">
+            Enroll
+        </a>
+    {% endif %}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
