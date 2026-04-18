@@ -251,6 +251,7 @@ def student_report(request, course_id, student_id):
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+import markdown
 
 @login_required
 @csrf_exempt
@@ -293,6 +294,10 @@ def generate_ai_insight(request):
             """
 
             insight = ai_tutor_response(prompt)
+            insight = markdown.markdown(
+                insight,
+                extensions=['extra', 'nl2br']
+            )
 
             return JsonResponse({'insight': insight})
 

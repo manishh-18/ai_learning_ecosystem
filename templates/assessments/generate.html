@@ -20,9 +20,28 @@
     </div>
 
     <!-- BUTTON -->
-    <a href="{% url 'generate_quiz' document.id %}" class="btn btn-primary">
-        Generate Quiz 🚀
-    </a>
+    {% if request.user.role == 'student' %}
+
+<a href="{% url 'generate_quiz' document.id %}" class="btn btn-primary">
+    Generate Quiz 🚀
+</a>
+
+{% else %}
+
+<form method="post" action="{% url 'generate_quiz' document.id %}">
+    {% csrf_token %}
+
+    <select name="course_id" class="form-control mb-3" required>
+        <option value="">Select Course</option>
+        {% for course in courses %}
+            <option value="{{ course.id }}">{{ course.title }}</option>
+        {% endfor %}
+    </select>
+
+    <button class="btn btn-primary">Assign Quiz</button>
+</form>
+
+{% endif %}
 
 </div>
 

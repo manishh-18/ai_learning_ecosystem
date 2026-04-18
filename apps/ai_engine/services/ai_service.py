@@ -233,36 +233,40 @@ def generate_summary(text):
 
 # ---------- QUESTIONS ----------
 def generate_questions(text):
+    import json
+
     prompt = f"""
-    Generate 5 MCQ questions from the following content.
+Generate 5 multiple choice questions from the text below.
 
-    Each question must have:
-    - question
-    - 4 options
-    - correct_answer
-    - explanation
+Return ONLY JSON:
 
-    Return ONLY JSON format like:
+[
+  {{
+    "question": "Question text",
+    "options": ["A. option1", "B. option2", "C. option3", "D. option4"],
+    "correct_answer": "A",
+    "explanation": "short explanation"
+  }}
+]
 
-    [
-      {{
-        "question": "...",
-        "options": ["A. Option", "B. Option", "C. Option", "D. Option"],
-        "correct_answer": "A",
-        "explanation": "..."
-      }}
-    ]
+TEXT:
+{text}
+"""
 
-    Content:
-    {text}
-    """
+    response = ai_tutor_response(prompt)
 
-    response = generate_ai_response(prompt)
+    print("RAW AI RESPONSE:", response)
+
+    # ✅ CLEAN MARKDOWN
+    response = response.replace("```json", "").replace("```", "").strip()
 
     try:
-        return json.loads(response)
+        questions = json.loads(response)
     except:
-        return []
+        print("❌ JSON parsing failed")
+        questions = []
+
+    return questions
 
 
 # ---------- FEEDBACK ----------

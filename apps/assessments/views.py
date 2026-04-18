@@ -33,6 +33,7 @@ def quiz_list(request):
 
 
 @login_required
+@login_required
 def view_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
 
@@ -42,11 +43,17 @@ def view_quiz(request, quiz_id):
 
         for i, q in enumerate(quiz.questions, start=1):
             selected = request.POST.get(f'q{i}')
+
             if not selected:
                 selected = "Not Answered"
+
             correct = q['correct_answer']
 
-            if selected == correct:
+            # ✅ FIX: compare only option letter (A, B, C, D)
+            selected_clean = selected.strip().upper()[0] if selected != "Not Answered" else ""
+            correct_clean = correct.strip().upper()[0]
+
+            if selected_clean == correct_clean:
                 score += 1
                 results.append({
                     'question': q['question'],
@@ -56,7 +63,7 @@ def view_quiz(request, quiz_id):
                 feedback = generate_feedback(
                     question=q['question'],
                     selected_answer=selected,
-                    correct_answer=q['correct_answer'],
+                    correct_answer=correct,
                     explanation=q.get('explanation', '')
                 )
                 results.append({
@@ -66,14 +73,8 @@ def view_quiz(request, quiz_id):
                     'correct': correct,
                     'feedback': feedback
                 })
-            QuizAttempt.objects.create(
-                user=request.user,
-                quiz=quiz,
-                score=score,
-                total=len(quiz.questions)
-            )
 
-            print("RESULTS:", results)
+        # ✅ FIX: create attempt ONLY ONCE (outside loop)
         QuizAttempt.objects.create(
             user=request.user,
             quiz=quiz,
@@ -93,35 +94,50 @@ def view_quiz(request, quiz_id):
 def generate_quiz_page(request, doc_id):
     document = get_object_or_404(Document, id=doc_id)
 
-    return render(request, 'assessments/generate.html', {
-        'document': document
-    })
+    context = {'document': document}
+
+    if request.user.role == 'instructor':
+        context['courses'] = Course.objects.filter(instructor=request.user)
+
+    return render(request, 'assessments/generate.html', context)
 
 @login_required
 def generate_quiz(request, doc_id):
     document = get_object_or_404(Document, id=doc_id)
 
-    courses = Course.objects.filter(instructor=request.user)
+    questions = generate_questions(document.extracted_text[:3000])
 
-    if request.method == 'POST':
-        course_id = request.POST.get('course')
-        course = Course.objects.get(id=course_id)
-
-        questions = generate_questions(document.extracted_text[:3000])
-
+    # ✅ STUDENT FLOW
+    if request.user.role == 'student':
         quiz = Quiz.objects.create(
             document=document,
             created_by=request.user,
-            course=course,
             questions=questions
         )
-
+        print("TEXT:", document.extracted_text[:200])
+        print("QUESTIONS:", questions)
         return redirect('view_quiz', quiz_id=quiz.id)
 
-    return render(request, 'assessments/select_course.html', {
-        'document': document,
-        'courses': courses
-    })
+    # ✅ INSTRUCTOR FLOW
+    if request.user.role == 'instructor':
+
+        if request.method == 'POST':
+            course_id = request.POST.get('course_id')
+
+            if not course_id:
+                return redirect('generate_quiz_page', doc_id=doc_id)
+
+            course = get_object_or_404(Course, id=course_id)
+
+            quiz = Quiz.objects.create(
+                document=document,
+                created_by=request.user,
+                questions=questions,
+                course=course
+            )
+            return redirect('instructor_dashboard')
+        # 🔥 FIXED HERE
+        return redirect('generate_quiz_page', doc_id=doc_id)
 
 @login_required
 def delete_quiz(request, quiz_id):

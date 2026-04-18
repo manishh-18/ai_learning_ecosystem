@@ -32,7 +32,7 @@ def upload_document(request):
                 return redirect('upload_document')
 
             doc.extracted_text = text
-            summary = generate_summary(text[:100000])  # limit text size
+            summary = generate_summary(text[:10000])  # limit text size
             summary = summary.replace("• -", "-").replace("•", "")
             summary = markdown.markdown(
                 summary,
