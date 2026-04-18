@@ -205,14 +205,24 @@ def clean_ai_output(text):
 # ---------- SUMMARY ----------
 def generate_summary(text):
     prompt = f"""
-    Summarize the following content in short bullet points or if content is large then make summary according to you but cover all the topic
+    Summarize the following content in bullet points or if content is large then make summary according to you but cover all the topic
 
     Rules:
     - Do NOT add any introduction
     - Do NOT write phrases like "Here is the summary"
     - Keep it short and direct
     - Use simple student-friendly language
-
+    Format the summary properly:
+    - Use clean bullet points (no symbols like • or - together)
+    - Use proper headings
+    - Do NOT use symbols like "• -"
+    - Keep it structured and readable
+    Format the output strictly as:
+    - Use headings with **Title**
+    - Use only "-" for bullet points
+    - Do NOT use "•" or "*"
+    - Keep spacing between sections
+    NOTE : Always cover full content to summarize means all the content should be in summary
     Content:
     {text}
     """

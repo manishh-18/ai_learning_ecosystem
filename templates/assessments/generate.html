@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- BACK BUTTON -->
+    <div class="mb-3">
+        <a href="{% url 'document_list' %}" class="btn btn-outline-secondary">
+            ← Back to Documents
+        </a>
+    </div>
+
+    <h2>🧠 Generate Quiz</h2>
+
+    <!-- DOCUMENT INFO -->
+    <div class="card p-3 mb-3 shadow-sm">
+        <h5>{{ document.title }}</h5>
+        <p class="text-muted">Quiz will be generated from this document</p>
+    </div>
+
+    <!-- BUTTON -->
+    <a href="{% url 'generate_quiz' document.id %}" class="btn btn-primary">
+        Generate Quiz 🚀
+    </a>
+
+</div>
+
+{% endblock %}

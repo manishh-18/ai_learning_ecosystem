@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+<div class="mb-3">
+    <a href="{% url 'document_list' %}" class="btn btn-outline-secondary">
+        ← Back to Documents
+    </a>
+</div>
 <div class="container mt-4">
 
     <h3>{{ doc.title }}</h3>
 
-    <div class="summary-card glass mt-3">
-        {% for line in doc.ai_summary.splitlines %}
-            {% if line %}
-                <p>• {{ line }}</p>
-            {% endif %}
-        {% endfor %}
-    </div>
+    <div class="summary-card markdown-body">
+    {{ document.ai_summary|safe }}
+</div>
 
 </div>
 

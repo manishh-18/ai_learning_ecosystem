@@ -58,7 +58,13 @@
     {% if documents %}
 
         {% for doc in documents %}
-        <div class="doc-card glass mb-4">
+
+        <div class="doc-card glass mb-4 ">
+            <a href="{% url 'delete_document' doc.id %}" 
+               class="btn btn-danger btn-sm btn-custom float-end"
+               onclick="return confirm('Delete this document?')">
+               🗑 Delete
+            </a>
 
             <!-- Title -->
             <h5 class="mb-2">{{ doc.title }}</h5>
@@ -68,13 +74,9 @@
 
                 <p class="mb-1"><b>AI Summary:</b></p>
 
-                <div class="summary-box">
-                    {% for line in doc.ai_summary.splitlines %}
-                        {% if line %}
-                            <div class="summary-point">• {{ line }}</div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                <div class="summary-box markdown-body">
+    {{ doc.ai_summary|safe }}
+</div>
 
                 <!-- Buttons -->
                 <div class="action-buttons">
@@ -83,7 +85,7 @@
                         View Summary
                     </a>
 
-                    <a href="/assessments/generate/{{ doc.id }}/" class="btn btn-primary btn-custom">
+                    <a href="{% url 'generate_quiz_page' doc.id %}" class="btn btn-primary btn-custom">
                         Generate Quiz
                     </a>
 
@@ -114,10 +116,10 @@
 
     {% else %}
         <div class="text-center mt-5">
-    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" width="120">
-    <h5 class="mt-3">Nothing here yet</h5>
-    <p class="text-muted">Start by creating something 🚀</p>
-</div>
+            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" width="120">
+            <h5 class="mt-3">Nothing here yet</h5>
+            <p class="text-muted">Start by creating something 🚀</p>
+        </div>
     {% endif %}
 
 </div>

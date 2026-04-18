@@ -90,6 +90,14 @@ def view_quiz(request, quiz_id):
     return render(request, 'assessments/view_quiz.html', {'quiz': quiz})
 
 @login_required
+def generate_quiz_page(request, doc_id):
+    document = get_object_or_404(Document, id=doc_id)
+
+    return render(request, 'assessments/generate.html', {
+        'document': document
+    })
+
+@login_required
 def generate_quiz(request, doc_id):
     document = get_object_or_404(Document, id=doc_id)
 
@@ -114,3 +122,9 @@ def generate_quiz(request, doc_id):
         'document': document,
         'courses': courses
     })
+
+@login_required
+def delete_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    quiz.delete()
+    return redirect('quiz_list')

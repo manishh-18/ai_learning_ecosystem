@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import DocumentForm
 from .models import Document
 from apps.ai_engine.services.ai_service import generate_summary
 import PyPDF2
+import markdown
 from django.contrib import messages
 
 @login_required
@@ -31,7 +32,12 @@ def upload_document(request):
                 return redirect('upload_document')
 
             doc.extracted_text = text
-            summary = generate_summary(text[:3000])  # limit text size
+            summary = generate_summary(text[:100000])  # limit text size
+            summary = summary.replace("• -", "-").replace("•", "")
+            summary = markdown.markdown(
+                summary,
+                extensions=['extra', 'nl2br']
+            )
             doc.ai_summary = summary
             doc.save()
 
@@ -51,3 +57,9 @@ def document_list(request):
 def view_summary(request, doc_id):
     doc = Document.objects.get(id=doc_id)
     return render(request, 'documents/summary.html', {'doc': doc})
+
+@login_required
+def delete_document(request, doc_id):
+    doc = get_object_or_404(Document, id=doc_id)
+    doc.delete()
+    return redirect('document_list')
