@@ -291,6 +291,11 @@ def ai_tutor_response(question):
     - No introduction like "Sure" or "Here is"
     - Be direct and educational
     - Use simple language
+    Format your answer properly:
+    - Use bullet points
+    - Use numbering
+    - Add spacing between sections
+    - Keep it clean and readable
 
     Question:
     {question}

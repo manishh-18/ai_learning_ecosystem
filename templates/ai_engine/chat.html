@@ -2,71 +2,64 @@
 
 {% block content %}
 
-<!-- <style>
-.chat-container {
-    max-width: 800px;
-    margin: auto;
+<style>
+.chat-layout {
+    display: flex;
+    gap: 20px;
 }
 
-.chat-box {
-    height: 400px;
-    overflow-y: auto;
-    background: #f8f9fa;
+/* SIDEBAR */
+.chat-sidebar {
+    width: 260px;
+    background: #0f172a;
     padding: 15px;
     border-radius: 12px;
-}
-
-.user-msg {
-    text-align: right;
-    margin-bottom: 10px;
-}
-
-.bot-msg {
-    text-align: left;
-    margin-bottom: 10px;
-}
-
-.msg {
-    display: inline-block;
-    padding: 10px 15px;
-    border-radius: 12px;
-    max-width: 70%;
-}
-
-.user {
-    background: #6366F1;
     color: white;
 }
 
-.bot {
-    background: #e5e7eb;
+.chat-sidebar a {
+    text-decoration: none;
 }
 
-.input-box {
+.chat-session {
     display: flex;
-    margin-top: 10px;
-}
-
-.input-box input {
-    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
     border-radius: 8px;
+    background: #1f2937;
+    transition: 0.2s;
 }
 
-</style> -->
-<style>
+.chat-session.active {
+    background: #6366F1;
+}
+
+.chat-session:hover {
+    background: #374151;
+}
+
+.chat-session span {
+    color: white;
+    font-size: 14px;
+}
+
+/* CHAT AREA */
 .chat-container {
+    flex: 1;
     max-width: 900px;
-    margin: auto;
 }
 
 .chat-box {
-    height: 450px;
+    height: 480px;
     overflow-y: auto;
     padding: 20px;
     background: #f9fafb;
     border-radius: 15px;
 }
 
+/* MESSAGES */
 .chat-row {
     display: flex;
     margin-bottom: 12px;
@@ -96,6 +89,12 @@
     background: #e5e7eb;
 }
 
+.msg.bot p {
+    margin: 5px 0;
+    line-height: 1.5;
+}
+
+/* INPUT */
 .chat-input-box {
     display: flex;
     margin-top: 10px;
@@ -116,96 +115,175 @@
     padding: 10px 15px;
     border-radius: 10px;
 }
-.user {
-    background: linear-gradient(135deg, #6366F1, #4F46E5);
-    color: white;
+.msg.bot p {
+    margin: 6px 0;
+    line-height: 1.6;
 }
 
-.bot {
-    background: #f3f4f6;
-}
-.msg.bot p {
-    margin: 5px 0;
+.msg.bot li {
+    margin: 4px 0;
     line-height: 1.5;
 }
-</style>
-<div style="display:flex; gap:20px;">
+.msg.bot h1, .msg.bot h2, .msg.bot h3 {
+    font-weight: 600;
+    margin-top: 10px;
+}
 
-<!-- SIDEBAR -->
-<div style="width:250px;">
+.msg.bot p {
+    margin: 6px 0;
+    line-height: 1.6;
+}
+
+.msg.bot ul {
+    padding-left: 20px;
+}
+
+.msg.bot li {
+    margin: 5px 0;
+}
+
+.msg.bot code {
+    background: #111827;
+    color: #f8f9f9;
+    padding: 3px 6px;
+    border-radius: 5px;
+}
+
+.msg.bot pre {
+    background: #111827;
+    color: #eff3f1;
+    padding: 10px;
+    border-radius: 10px;
+    overflow-x: auto;
+}
+</style>
+
+<div class="chat-layout">
+
+    <!-- SIDEBAR -->
+<div class="chat-sidebar">
+
+    <button id="multiDeleteBtn" class="btn btn-danger w-100 mb-2" style="display:none;">
+        Delete Selected
+    </button>
 
     <a href="{% url 'chat' %}" class="btn btn-primary w-100 mb-3">
         + New Chat
     </a>
 
-    {% for s in sessions %}
-        <a href="{% url 'chat_session' s.id %}" 
-           class="d-block p-2 mb-2 rounded {% if s.id == current_session.id %}bg-dark text-white{% endif %}">
-            {{ s.title }}
-        </a>
-    {% endfor %}
-
-</div>
-<div style="flex:1;">
-<div class="chat-container">
-
-    <h3 class="mb-3">🤖 AI Tutor</h3>
-
-    <div class="chat-box" id="chatBox">
-
-        {% for chat in chats %}
-        <div class="chat-row user-row">
-            <div class="msg user">{{ chat.question }}</div>
-        </div>
-
-        <div class="chat-row bot-row">
-            <div class="msg bot">
-                {% for line in chat.answer.splitlines %}
-                    {% if line %}
-                        <p style="margin-bottom:8px;">{{ line }}</p>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-        {% endfor %}
-
-    </div>
-
-    <form method="post" class="chat-input-box">
+    <form id="multiDeleteForm" method="POST" action="{% url 'delete_multiple_chats' %}">
         {% csrf_token %}
-        <input type="text" name="message" placeholder="Ask anything..." required>
-        <button type="submit">➤</button>
+
+        <div style="max-height:500px; overflow-y:auto;">
+
+            {% for s in sessions %}
+            <div class="chat-session {% if s.id == current_session.id %}active{% endif %}">
+
+                <!-- Checkbox -->
+                <input type="checkbox" class="chat-checkbox" name="session_ids[]" value="{{ s.id }}">
+
+                <!-- Title -->
+                <a href="{% url 'chat_session' s.id %}" style="flex:1; text-decoration:none; color:white;">
+    {{ s.title|truncatechars:25 }}
+</a>
+
+<!-- Rename Button -->
+<span onclick="renameChat({{ s.id }}, '{{ s.title }}')" 
+      style="cursor:pointer; margin-left:8px;">
+    ✏️
+</span>
+
+                <!-- Delete single -->
+                <a href="{% url 'delete_chat' s.id %}" onclick="return confirm('Delete this chat?')" style="color:#f87171;">
+                    🗑
+                </a>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
     </form>
 
 </div>
+
+    <!-- CHAT AREA -->
+    <div class="chat-container">
+
+        <h3 class="mb-3">🤖 AI Tutor</h3>
+
+        <div class="chat-box" id="chatBox">
+
+            {% for chat in chats %}
+
+            <div class="chat-row user-row">
+                <div class="msg user">{{ chat.question }}</div>
+            </div>
+
+            <div class="chat-row bot-row">
+                <div class="msg bot">
+    {{ chat.answer|safe }}
 </div>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <form method="post" class="chat-input-box">
+            {% csrf_token %}
+            <input type="text" name="message" placeholder="Ask anything..." required>
+            <button type="submit">➤</button>
+        </form>
+
+    </div>
+
+</div>
+
 <script>
 const chatBox = document.getElementById("chatBox");
-
-// auto scroll to bottom on load
 chatBox.scrollTop = chatBox.scrollHeight;
 </script>
 
-<!-- <script>
-const form = document.getElementById("chatForm");
-const chatBox = document.getElementById("chatBox"); -->
+<script>
+// RENAME CHAT
+function renameChat(id, oldTitle) {
+    let newTitle = prompt("Rename chat:", oldTitle);
 
-<!-- // form.addEventListener("submit", function () {
-//     const input = form.querySelector("input");
-//     const msg = input.value;
+    if (newTitle && newTitle !== oldTitle) {
+        fetch(`/ai/chat/rename/${id}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "title=" + encodeURIComponent(newTitle)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    }
+}
 
-//     // user message
-//     chatBox.innerHTML += `
-//         <div class="user-msg">
-//             <div class="msg user">${msg}</div>
-//         </div>
-//     `;
 
-//     input.value = "";
+// MULTI DELETE
+const checkboxes = document.querySelectorAll(".chat-checkbox");
+const deleteBtn = document.getElementById("multiDeleteBtn");
 
-//     // scroll
-//     chatBox.scrollTop = chatBox.scrollHeight;
-// }); -->
-<!-- </script> -->
+checkboxes.forEach(cb => {
+    cb.addEventListener("change", () => {
+        let anyChecked = [...checkboxes].some(c => c.checked);
+        deleteBtn.style.display = anyChecked ? "block" : "none";
+    });
+});
 
+deleteBtn.addEventListener("click", () => {
+    if (confirm("Delete selected chats?")) {
+        document.getElementById("multiDeleteForm").submit();
+    }
+});
+</script>
 {% endblock %}
