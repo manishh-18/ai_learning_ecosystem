@@ -1,0 +1,52 @@
+# 🔐 Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 🔐 Virtual Environment
+venv/
+env/
+ENV/
+
+# 🔐 Django
+*.log
+*.pot
+*.pyc
+db.sqlite3
+db.sqlite3-journal
+
+# 🔐 Media & Static (optional)
+media/
+staticfiles/
+
+# 🔐 Environment variables
+.env
+.env.*
+
+# 🔐 VS Code / IDE
+.vscode/
+.idea/
+
+# 🔐 OS Files
+.DS_Store
+Thumbs.db
+
+# 🔐 Migrations (optional but recommended only for early dev)
+# apps/*/migrations/*.py
+# !apps/*/migrations/__init__.py
+
+# 🔐 Node (if frontend used later)
+node_modules/
+
+# 🔐 Temporary files
+*.swp
+*.tmp
+
+# 🔐 Coverage / Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# 🔐 Secrets
+*.pem
+*.key
