@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5" style="max-width:600px;">
+
+    <!-- BACK BUTTON -->
+    <a href="{% url 'manage_course' course.id %}" class="btn btn-outline-secondary mb-3">
+        ← Back to Course
+    </a>
+
+    <div class="card p-4 shadow-sm">
+
+        <h4 class="mb-3">📄 Add Study Material</h4>
+        <p class="text-muted">Upload notes, PDFs or study files for students</p>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label>Title</label>
+                <input type="text" name="title" class="form-control" placeholder="Enter material title" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Upload File</label>
+                <input type="file" name="file" class="form-control" required>
+            </div>
+
+            <button class="btn btn-primary w-100">
+                Upload Material
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

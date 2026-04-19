@@ -51,7 +51,7 @@ def upload_document(request):
 
 @login_required
 def document_list(request):
-    documents = Document.objects.all()
+    documents = Document.objects.filter(uploaded_by=request.user)
     return render(request, 'documents/list.html', {'documents': documents})
 
 def view_summary(request, doc_id):

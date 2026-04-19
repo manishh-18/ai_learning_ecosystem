@@ -56,12 +56,17 @@ def course_detail(request, course_id):
         return redirect('course_list')
 
 
+    from .models import CourseMaterial, CourseVideo
+    from apps.assessments.models import Quiz
+
     materials = CourseMaterial.objects.filter(course=course)
+    videos = CourseVideo.objects.filter(course=course)
     quizzes = Quiz.objects.filter(course=course)
 
     return render(request, 'courses/detail.html', {
         'course': course,
         'documents': materials,
+        'videos' : videos,
         'quizzes': quizzes
     })
 

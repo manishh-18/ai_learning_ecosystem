@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5" style="max-width:600px;">
+
+    <a href="{% url 'manage_course' course.id %}" class="btn btn-outline-secondary mb-3">
+        ← Back to Course
+    </a>
+
+    <div class="card p-4 shadow-sm">
+
+        <h4 class="mb-3">🎥 Add Video</h4>
+        <p class="text-muted">Add YouTube or any video link</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label>Video Title</label>
+                <input type="text" name="title" class="form-control" placeholder="Enter video title" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Video URL</label>
+                <input type="url" name="video_url" class="form-control" placeholder="https://youtube.com/..." required>
+            </div>
+
+            <button class="btn btn-success w-100">
+                Add Video
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

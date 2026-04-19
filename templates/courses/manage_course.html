@@ -10,7 +10,9 @@
     <div class="mb-3">
         <a href="{% url 'add_material' course.id %}" class="btn btn-primary">+ Add Material</a>
         <a href="{% url 'add_video' course.id %}" class="btn btn-success">+ Add Video</a>
-        <a href="/assessments/generate-page/{{ course.id }}/" class="btn btn-warning">+ Add Quiz</a>
+        <a href="{% url 'document_list' %}" class="btn btn-warning">
+    + Create Quiz from Document
+</a>
     </div>
 
     <hr>

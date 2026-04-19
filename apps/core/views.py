@@ -122,7 +122,7 @@ def instructor_dashboard(request):
     courses = Course.objects.filter(instructor=user)
 
     enrollments = Enrollment.objects.filter(course__in=courses)
-    quizzes = Quiz.objects.filter(created_by=user)
+    quizzes = Quiz.objects.filter(created_by=request.user)
     attempts = QuizAttempt.objects.filter(quiz__course__in=courses)
 
     total_students = enrollments.values('user').distinct().count()

@@ -4,13 +4,21 @@ from apps.documents.models import Document
 from apps.ai_engine.services.ai_service import generate_questions
 from apps.ai_engine.services.ai_service import generate_feedback
 from .models import Quiz, Course
+from apps.courses.models import Enrollment
 from .models import QuizAttempt
 from django.db.models import Max
 
 
 @login_required
 def quiz_list(request):
-    quizzes = Quiz.objects.all()
+
+    # ✅ ROLE-BASED FILTER
+    if request.user.role == 'instructor':
+        quizzes = Quiz.objects.filter(created_by=request.user)
+    else:
+        enrolled_courses = Enrollment.objects.filter(user=request.user).values_list('course', flat=True)
+        quizzes = Quiz.objects.filter(course__in=enrolled_courses)
+
     attempts = QuizAttempt.objects.filter(user=request.user)
 
     quiz_data = []
@@ -112,7 +120,8 @@ def generate_quiz(request, doc_id):
         quiz = Quiz.objects.create(
             document=document,
             created_by=request.user,
-            questions=questions
+            questions=questions,
+            course=None   # ✅ VERY IMPORTANT
         )
         print("TEXT:", document.extracted_text[:200])
         print("QUESTIONS:", questions)
